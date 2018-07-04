@@ -1,0 +1,24 @@
+<table>
+    <tbody>
+        <tr>
+            <td>Hostname</td>
+            <td>{{ node.hostname }}</td>
+        </tr>
+        <tr>
+            <td>IPv4</td>
+            <td>{{ node.ipv4 }}</td>
+        </tr>
+        <tr>
+            <td>IPv6</td>
+            <td>{{ node.ipv6 }}</td>
+        </tr>
+        <tr>
+            <td>Driver</td>
+            <td> {{ node.driver }}</td>
+        </tr>
+        <tr>
+            <td>Group Name</td>
+            <td>{{ node.group.name }}</td>
+        </tr>
+    </tbody>
+</table>
