@@ -1,5 +1,7 @@
 #+TITLE: Viconf
 
+*DISCLAIMER*: This tool is not yet ready to be used at all. Do not even think about testing this yet!
+
 A framework for pushing network config to devices.
 
 Under heavy development.
