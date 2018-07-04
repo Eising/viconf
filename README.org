@@ -1,0 +1,54 @@
+#+TITLE: Viconf
+
+A framework for pushing network config to devices.
+
+Under heavy development.
+
+This tool is meant to stand along Vico - where Vico generates the config, Viconf
+pushes it to the device.
+
+* Installation
+Try this docker-compose file:
+
+#+BEGIN_SRC yaml
+  ---
+  version: '2'
+
+  services:
+    viconf-db_data:
+      image: tianon/true
+      volumes:
+        - /var/lib/postgresql/data
+
+    viconf-db:
+      image: postgres
+      volumes_from:
+        - viconf-db_data
+      environment:
+        POSTGRES_USER: viconf
+        POSTGRES_PASSWORD: SOMEPASS
+        POSTGRES_DB: viconf
+    viconf:
+      build: /home/eising/Dev/viconf/viconf
+      volumes:
+        - /home/eising/Dev/viconf/viconf:/app
+      environment:
+        DB_USER: viconf
+        DB_PASS: SOMEPASS
+        DB_NAME: viconf
+        DB_SERVICE: viconf-db
+        DB_PORT: 5432
+      ports:
+        - "8000:8000"
+      depends_on:
+        - viconf-db
+
+    rabbitmq:
+      image: rabbitmq:latest
+      environment:
+        - RABBITMQ_DEFAULT_USER=admin
+        - RABBITMQ_DEFAULT_PASS=pass123
+      ports:
+        - "5673:5673"
+
+#+END_SRC
