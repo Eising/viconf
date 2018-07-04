@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Viconf</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- jQuery UI -->
+    <link href="https://code.jquery.com/ui/1.10.3/themes/redmond/jquery-ui.css" rel="stylesheet" media="screen">
+
+    <!-- Bootstrap -->
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- styles -->
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <link href="{% static 'vendors/form-helpers/css/bootstrap-formhelpers.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendors/select/bootstrap-select.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendors/tags/css/bootstrap-tags.css' %}" rel="stylesheet">
+
+    <link href="css/forms.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+  	<div class="header">
+	     <div class="container">
+	        <div class="row">
+	           <div class="col-md-5">
+	              <!-- Logo -->
+	              <div class="logo">
+	                 <h1><a href="/nodes/">Viconf</a></h1>
+	              </div>
+	           </div>
+	           <div class="col-md-5">
+	              <div class="row">
+	                <div class="col-lg-12">
+	                </div>
+	              </div>
+	           </div>
+	           <div class="col-md-2">
+	              <div class="navbar navbar-inverse" role="banner">
+	                  <nav class="collapse navbar-collapse bs-navbar-collapse navbar-right" role="navigation">
+	                    <ul class="nav navbar-nav">
+	                      <li class="dropdown">
+	                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">My Account <b class="caret"></b></a>
+	                        <ul class="dropdown-menu animated fadeInUp">
+	                          <li><a href="profile.html">Profile</a></li>
+	                          <li><a href="login.html">Logout</a></li>
+	                        </ul>
+	                      </li>
+	                    </ul>
+	                  </nav>
+	              </div>
+	           </div>
+	        </div>
+	     </div>
+	</div>
+
+    <div class="page-content">
+    	<div class="row">
+		  <div class="col-md-2">
+		  	<div class="sidebar content-box" style="display: block;">
+                <ul class="nav">
+                    <!-- Main menu -->
+                    <li><a href="{% url 'nodes:index' %}"><i class="glyphicon glyphicon-hdd"></i> Nodes</a></li>
+                    <li><a href="{% url 'nodes:groups' %}"><i class="glyphicon glyphicon-th-large"></i> Groups</a></li>
+                </ul>
+        </div>
+      </div>
+      {% block content %}
+      {% endblock %}
+      </div>
+    </div>
+
+    <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="popupLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="popupLabel">Confirm Delete</h4>
+                </div>
+
+                <div class="modal-body" >
+                    <p>This will delete the selected item.</p>
+                    <p>Are you sure?</p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-danger btn-ok">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+
+            <div class="copy text-center">
+                Copyright 2014 <a href='#'>Website</a>
+            </div>
+
+        </div>
+    </footer>
+
+
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <!-- jQuery UI -->
+    <script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+
+    <script src="{% static 'vendors/form-helpers/js/bootstrap-formhelpers.min.js' %}"></script>
+
+    <script src="{% static 'vendors/select/bootstrap-select.min.js' %}"></script>
+
+
+    <script src="{% static 'vendors/tags/js/bootstrap-tags.min.js' %}"></script>
+
+    <script src="{% static 'vendors/mask/jquery.maskedinput.min.js' %}"></script>
+
+    <script src="{% static 'vendors/moment/moment.min.js' %}"></script>
+
+
+    <script src="{% static 'vendors/wizard/jquery.bootstrap.wizard.min.js' %}"></script>
+
+    <!-- bootstrap-datetimepicker -->
+    <link href="{% static 'vendors/bootstrap-datetimepicker/datetimepicker.css' %}" rel="stylesheet">
+    <script src="{% static 'vendors/bootstrap-datetimepicker/bootstrap-datetimepicker.js' %}"></script>
+
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+	  <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+
+    <script src="{% static 'js/custom.js' %}" ></script>
+    <script src="{% static 'js/forms.js' %}"></script>
+    {% block viewjs %}
+    {% endblock %}
+  </body>
+</html>

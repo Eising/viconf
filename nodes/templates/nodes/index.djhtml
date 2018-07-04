@@ -1,10 +1,41 @@
-{% if all_nodes %}
+{% extends 'templates/base.djhtml' %}
+{% block content %}
+    <div class="col-md-10">
+        <div class="row">
+            <div class="content-box-large">
+                <div class="panel-heading">
+                    <div class="panel-title" >Nodes</div>
+                    <div class="panel-body">
+                        {% if all_nodes %}
 
-<ul>
-    {% for node in all_nodes %}
-        <li><a href="/nodes/{{ node.id }}/">{{ node.hostname }} </a></li>
-    {% endfor %}
-</ul>
-{% else %}
-<p>No nodes available</p>
-{% endif %}
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Hostname</th>
+                                        <th>Driver</th>
+                                        <th>Group</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for node in all_nodes %}
+                                        <tr>
+                                            <td>{{ node.id }}</td>
+                                            <td>{{ node.hostname }}</td>
+                                            <td>{{ node.driver }}</td>
+                                            <td>{{ node.group.name }}</td>
+                                            <td><a href="{% url 'nodes:detail' pk=node.id %}"><button type="button" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-eye-open"></i> View</button></a></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <p>No nodes available</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
