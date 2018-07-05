@@ -33,6 +33,7 @@ pynxos==0.0.3
 pyserial==3.4
 pytz==2018.5
 PyYAML==3.12
+redis==2.10.6
 requests==2.19.1
 scp==0.11.0
 six==1.11.0

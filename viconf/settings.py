@@ -135,4 +135,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-CELERY_RESULT_BACKEND = 'django-db'
+CELERY_BROKER_URL = "redis://:{}@redis:6379/".format(os.environ['REDIS_PASSWORD'])
+CELERY_CELERY_RESULT_BACKEND = 'django-db'

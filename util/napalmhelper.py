@@ -1,8 +1,11 @@
 from napalm.base import get_network_driver
 import sys
 
+from celery import shared_task
+
 class NapalmHelper:
 
+    @shared_task
     def configure_device(target, config, commit=False):
         vendor = "iosxr"
         username = "vrnetlab"
