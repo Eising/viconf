@@ -136,5 +136,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Project includes static files as well
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "viconf/static")
+]
+
 CELERY_BROKER_URL = "redis://:{}@redis:6379/".format(os.environ['REDIS_PASSWORD'])
 CELERY_CELERY_RESULT_BACKEND = 'django-db'
