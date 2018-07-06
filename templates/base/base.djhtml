@@ -67,8 +67,19 @@
 		  	<div class="sidebar content-box" style="display: block;">
                 <ul class="nav">
                     <!-- Main menu -->
-                    <li><a href="{% url 'nodes:index' %}"><i class="glyphicon glyphicon-hdd"></i> Nodes</a></li>
-                    <li><a href="{% url 'nodes:groups' %}"><i class="glyphicon glyphicon-th-large"></i> Groups</a></li>
+                    <li class="submenu">
+                        <a href="#" >
+                            <i class="glyphicon glyphicon-hdd"></i> Nodes
+                            <span class="caret pull-right"></span>
+                        </a>
+                        <ul>
+                          <li><a href="{% url 'nodes:index' %}"> Nodes</a></li>
+                          <li><a href="{% url 'nodes:groups' %}">Groups</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="{% url 'configuration:provision' %}"><i class="glyphicon glyphicon-cog"></i> Provision Service</a></li>
+                    <li><a href="{% url 'configuration:forms' %}"><i class="glyphicon glyphicon-tasks"></i> Service Forms</a></li>
+                    <li><a href="{% url 'configuration:templates' %}"><i class="glyphicon glyphicon-pencil"></i> Templates</a></li>
                 </ul>
         </div>
       </div>

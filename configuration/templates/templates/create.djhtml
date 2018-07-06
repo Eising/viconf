@@ -1,0 +1,54 @@
+{% extends 'base/base.djhtml' %}
+{% block content %}
+{% load widget_tweaks %}
+<div class="col-md-10" id="maincontents">
+  <div class="row">
+    <div class="content-box-large">
+      <div class="panel-heading">
+	<div class="panel-title">Add/Modify template</div>
+	<div class="panel-options"></div>
+      </div>
+      <div class="panel-body">
+          {% verbatim %}
+	<p>Input your template here. Use {{ }} around variables. When you submit your template, you will be asked to define your variables as certain types.</p>
+  <p>The following built-in fields are supported: <pre>{{reference}}, {{customer}}, {{location}}</pre></p>
+  <p>To refer to inventory tables, use the following syntax: <pre>{{inventory__inventoryname__field__lookupfield}}</pre> where field is the field to be inserted in the template, and the lookupfield is the field you would select in a dropdown</p>
+
+          {% endverbatim %}
+          {% if form.instance.pk %}
+	<p>Note that by editing this template, you must manually update all service forms that reference it.</p>
+  {% endif %}
+	<div class="content-box-large">
+	    <form method="POST" id="composeformelement">{% csrf_token %}
+	    <fieldset>
+	      <div class="form-group">
+		<label>Name</label>
+    {% render_field form.name class+="form-control" placeholder="Name"%}
+	      </div>
+	      <div class="form-group">
+		<label>Description</label>
+    {% render_field form.description class+="form-control" placeholder="Description" %}
+	      </div>
+	      <div class="form-group">
+		<label>Platform</label>
+    {% render_field form.platform class+="form-control" placeholder="Platform" %}
+	      </div>
+	      <div class="form-group">
+		<label>Template to Configure service</label>
+    {% render_field form.up_contents class+="form-control" placeholder="Enter template here" rows="12"%}
+	      </div>
+	      <div class="form-group">
+		<label>Template to remove service</label>
+    {% render_field form.down_contents class+="form-control" placeholder="Enter template here" rows="12" %}
+	      </div>
+
+		 </fieldset>
+	    <button type="submit" class="btn btn-primary">Add template</button>
+	  </form>
+	</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
