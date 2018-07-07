@@ -15,3 +15,21 @@ def pystache_template_parsekeys(template):
     # return list of unique items
     # (json does not like sets)
     return list(set(keys))
+
+def get_configurable_tags(template):
+    tags = pystache_template_parsekeys(template)
+    # The following tags should be filtered out
+    default_tags = [
+        'customer',
+        'location',
+        'product',
+        'reference'
+    ]
+    # Here logic to handle inventory
+
+    # Remove unhandled keys
+    for defaulttag in default_tags:
+        if defaulttag in tags:
+            tags.remove(defaulttag)
+
+    return tags

@@ -1,0 +1,21 @@
+{% extends 'base/base.djhtml' %}
+{% block content %}
+    <div class="col-md-10" id="maincontents">
+        <div class="row">
+            <div class="content-box-large">
+                <div class="panel-heading">
+                    <div class="panel-title">View Template {{ template.name }}</div>
+                </div>
+                <div class="panel-body">
+                    <h3>Up</h3>
+                    {% autoescape off %}
+                    {{ up_contents }}
+                    <br>
+	                  <h3>Down</h3>
+                    {{ down_contents }}
+                    {% endautoescape %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

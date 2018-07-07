@@ -1,0 +1,35 @@
+{% extends 'base/base.djhtml' %}
+{% block content %}
+<div class="col-md-10" id="maincontents">
+  <div class="row">
+    <div class="content-box-large">
+      <div class="panel-heading">
+	<div class="panel-title">Select the validation types of the tags in your template</div>
+	<div class="panel-options"></div>
+      </div>
+      <div class="panel-body">
+	<div class="content-box-large">
+	  <form action="{% url 'configuration:templatetags' template_id=template.id %}" method="POST" id="tagformelement">
+        {% csrf_token %}
+	    <fieldset>
+          {% for tag in tags %}
+	      <div class="form-group">
+		<label>{{ tag }}</label>
+		<select class="form-control" placeholder="Validator..." name="tag.{{ tag }}">
+		  <option value="">Select validator</option>
+      {% for validator, detail in validators.items %}
+		  <option value="{{ validator }}"> {{ detail.description }}</option>
+      {% endfor %}
+		</select>
+	      </div>
+        {% endfor %}
+	    </fieldset>
+	    <button type="submit" class="btn btn-primary">Submit</button>
+	  </form>
+	</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

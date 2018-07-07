@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.postgres.fields import JSONField
 from nodes.models import Node
+from django.forms import ModelForm
 
 # Create your models here.
 class Template(models.Model):
@@ -9,8 +10,8 @@ class Template(models.Model):
     platform = models.CharField(max_length=255,  null=True)
     up_contents = models.TextField()
     down_contents = models.TextField()
-    fields = JSONField()
-    deleted = models.BooleanField()
+    fields = JSONField(null=True)
+    deleted = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now=True)
     modified = models.DateTimeField(auto_now=True)
 
@@ -42,3 +43,15 @@ class Config(models.Model):
     up_config = models.TextField()
     down_config = models.TextField()
     created = models.DateTimeField(auto_now=True)
+
+
+class TemplateForm(ModelForm):
+    class Meta:
+        model = Template
+        fields = [
+            "name",
+            "description",
+            "platform",
+            "up_contents",
+            "down_contents"
+        ]

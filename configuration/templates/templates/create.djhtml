@@ -19,7 +19,8 @@
 	<p>Note that by editing this template, you must manually update all service forms that reference it.</p>
   {% endif %}
 	<div class="content-box-large">
-	    <form method="POST" id="composeformelement">{% csrf_token %}
+      {% if "clone" in request.path|cut:"/" %} {% url "configuration:templatecompose" as URL %} {% endif %}
+	    <form method="POST" id="composeformelement" action="{{ URL }}" >{% csrf_token %}
 	    <fieldset>
 	      <div class="form-group">
 		<label>Name</label>
