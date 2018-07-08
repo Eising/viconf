@@ -1,0 +1,64 @@
+{% extends 'base/base.djhtml' %}
+{% block content %}
+
+<div class="col-md-10" id="maincontents">
+  <div class="row">
+    <div class="content-box-large">
+      <div class="panel-heading">
+	<div class="panel-title">Service form {{ form.name }}</div>
+      </div>
+      <div class="panel-body">
+	<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
+	  <tr>
+	    <td>Name</td>
+	    <td> {{ form.name }}></td>
+	  </tr>
+	   <tr>
+	    <td>Description</td>
+	    <td>{{ form.description }}</td>
+	  </tr>
+	  <tr>
+	    <td>Referenced templates</td>
+	    <td>
+	        <ul>
+              {% for template in form.templates.all %}
+		<li>{{ template.name }}</li>
+    {% endfor %}
+	      </ul>
+	    </td>
+	  </tr>
+	</table>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="content-box-large">
+      <div class="panel-heading">
+        <div class="panel-title">Configured fields and defaults</div>
+      </div>
+      <div class="panel-body">
+        <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Label</th>
+              <th>Default value</th>
+            </tr>
+          </thead>
+          <tbody>
+              {% for key, opt in defaults.items %}
+            <tr>
+              <td>{{ key }}</td>
+              <td>{{ opt.name }}</td>
+              <td>{{ opt.value }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}

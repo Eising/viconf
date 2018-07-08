@@ -15,12 +15,15 @@ class Template(models.Model):
     created = models.DateTimeField(auto_now=True)
     modified = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.name
+
 class Form(models.Model):
     name = models.CharField(max_length=255)
     defaults = JSONField()
     description = models.CharField(max_length=255)
-    require_update = models.BooleanField()
-    deleted = models.BooleanField()
+    require_update = models.BooleanField(default=False)
+    deleted = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now=True)
     modified = models.DateTimeField(auto_now=True)
     templates = models.ManyToManyField(Template)
@@ -54,4 +57,14 @@ class TemplateForm(ModelForm):
             "platform",
             "up_contents",
             "down_contents"
+        ]
+
+class FormForm(ModelForm):
+    class Meta:
+        model = Form
+        fields = [
+            "name",
+            "description",
+            "defaults",
+            "templates"
         ]

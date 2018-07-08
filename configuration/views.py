@@ -14,9 +14,9 @@ from util.validators import ViconfValidators
 import re
 import sys
 import json
+import copy
 
-from .models import Template
-# Create your views here.
+from .models import Template, Form, Service, FormForm
 
 # Templates view
 
@@ -73,10 +73,6 @@ def template_delete(request, pk):
     return HttpResponseRedirect(reverse('configuration:templates'))
 
 
-def template_clone(request, template_id):
-    # Logic to clone templates
-    return HttpResponseRedirect(reverse('configuration:templates'))
-
 def template_tags(request, template_id):
     template = get_object_or_404(Template, pk=template_id)
     if request.method == 'GET':
@@ -104,3 +100,142 @@ def template_tags(request, template_id):
 
 
 # Form views
+class FormList(generic.ListView):
+    context_object_name = Form
+    template_name = "forms/list.djhtml"
+
+    def get_queryset(self):
+        return Form.objects.exclude(deleted=True)
+
+    def dispatch(self, request, *args, **kwargs):
+        queryset = Form.objects.exclude(deleted=True)
+
+        if not queryset:
+            return HttpResponseRedirect(reverse('configuration:formcompose'))
+        else:
+            return super(FormList, self).dispatch(request, *args, **kwargs)
+
+def form_list(request):
+    form = Form.objects.exclude(deleted=True)
+
+    if not form:
+        return HttpResponseRedirect(reverse('configuration:formcompose'))
+    else:
+        return render(request, "forms/list.djhtml", { 'forms': form })
+
+def form_view(request, pk):
+    form = get_object_or_404(Form, pk=pk)
+    defaults = json.loads(form.defaults)
+
+    return render(request, 'forms/view.djhtml', { 'form': form, 'defaults': defaults})
+
+
+def form_create(request, pk=None):
+    if request.method == 'GET':
+        if pk is None:
+            formform = FormForm()
+            formform.fields['templates'].queryset = Template.objects.exclude(deleted=True)
+            return render(request, "forms/compose.djhtml", {'form': formform })
+        else:
+            form = get_object_or_404(Form, pk=pk)
+            name = form.name
+            description = form.description
+            templates = []
+            for template in form.templates:
+                templates.add(template)
+
+            templates = ",".join(templates)
+
+            kwargs = {'name': name, 'description': description, 'templates': templates, 'form_id': form.id, 'request': request }
+
+            return HttpResponse(actual_form_create(**kwargs))
+
+    elif request.method == 'POST':
+        name = request.POST['name']
+        description = request.POST['description']
+        templates = request.POST.getlist('templates')
+
+        kwargs = {'name': name, 'description': description, 'templates': templates, 'request': request }
+        return HttpResponse(actual_form_create(**kwargs))
+
+
+def actual_form_create(**kwargs):
+    name = kwargs['name']
+    description = kwargs['description']
+    templates = kwargs['templates']
+    request = kwargs['request']
+
+    tags = set()
+    for tid in templates:
+        up_ctags = get_configurable_tags(Template.objects.get(pk=tid).up_contents)
+        down_ctags = get_configurable_tags(Template.objects.get(pk=tid).down_contents)
+        for uct in up_ctags:
+            tags.add(uct)
+        for dct in down_ctags:
+            tags.add(uct)
+
+    templates = ",".join(templates)
+
+    if 'form_id' in kwargs:
+        form = get_object_or_404(Form, pk=form_id)
+        defaults = json.loads(form.defaults)
+
+        return render(request, "forms/config.djhtml", {'name': name, 'description': description, 'tags': tags, 'templates': templates, 'form': form, 'defaults': defaults })
+    else:
+        return render(request, "forms/config.djhtml", {'name': name, 'description': description, 'tags': tags, 'templates': templates })
+
+
+
+
+
+def form_config(request):
+    if request.method == 'POST':
+        defaults = dict()
+        for key, value in request.POST.items():
+            param = re.match(r'^(default|name)\.(\S+)$', key)
+            if param is not None:
+                keytype = param.group(1)
+                field = param.group(2)
+                if not field in defaults:
+                    defaults[field] = dict()
+                if keytype == 'default':
+                    defaults[field]["value"] = value
+                elif keytype == 'name':
+                    defaults[field]["name"] = value
+
+        defaults = json.dumps(defaults)
+        params = copy.deepcopy(request.POST)
+        params['defaults'] = defaults
+        templates = list()
+        for template in params['templates'].split(','):
+            print(template, file=sys.stderr)
+            templates.append(Template.objects.get(pk=template))
+
+        params['templates'] = templates
+        print(params, file=sys.stderr)
+        form = Form(name=params['name'], description=params['description'], defaults=defaults)
+        form.save()
+        for template in templates:
+            form.templates.add(template)
+        form.save()
+
+
+
+        return HttpResponseRedirect(reverse('configuration:forms'))
+
+
+
+def form_delete(request, pk):
+    form = get_object_or_404(Form, pk=pk)
+
+    form.deleted = True
+    form.save()
+
+    return HttpResponseRedirect(reverse('configuration:forms'))
+
+
+
+# Generic classes for working urls...
+
+class ProvisionList(generic.ListView):
+    context_object_name = Service
