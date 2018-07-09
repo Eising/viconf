@@ -19,7 +19,7 @@ class Node(models.Model):
     )
 
     hostname = models.CharField(max_length=255)
-    ipv4 = models.CharField(max_length=255)
+    ipv4 = models.CharField(max_length=255, blank=True)
     ipv6 = models.CharField(max_length=255, blank=True)
     driver = models.CharField(max_length=255, choices=DRIVERS)
     comment = models.TextField(blank=True)

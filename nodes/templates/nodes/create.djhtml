@@ -5,7 +5,7 @@
   <div class="row">
     <div class="content-box-large">
       <div class="panel-heading">
-	<div class="panel-title">Add/Modify node</div>
+	        <div class="panel-title"><h3>Add/Modify node</h3><br><p>Leave IPv4/IPv6 blank to rely on DNS for name lookup</p></div>
 	<div class="panel-options"></div>
       </div>
       <div class="panel-body">
@@ -13,13 +13,13 @@
               <form method="POST">{% csrf_token %}
                   <fieldset>
                       <div class="form-group">
-                          <label>Hostname</label>
+                          <label>Hostname<span style="color: red" >*</span></label>
                       </div>
                       <div class="form-group">
                           {% render_field form.hostname class="form-control required" placeholder="Hostname" %}
                       </div>
                       <div class="form-group">
-                          <label>Driver</label>
+                          <label>Driver<span style="color: red" >*</span></label>
                       </div>
                       <div class="form-group">
                           {% render_field form.driver class="form-control required" placeholder="Hostname" %}
@@ -29,7 +29,7 @@
                           <label>IPv4 Address</label>
                       </div>
                       <div class="form-group">
-                          {% render_field form.ipv4 class="form-control required validateipv4" placeholder="IPv4 Address" %}
+                          {% render_field form.ipv4 class="form-control validateipv4" placeholder="IPv4 Address" %}
                       </div>
                       <div class="form-group">
                           <label>IPv6 Address</label>
@@ -38,7 +38,7 @@
                           {% render_field form.ipv6 class="form-control validateipv6" placeholder="IPv6 Address" %}
                       </div>
                       <div class="form-group">
-                          <label>Group</label>
+                          <label>Group<span style="color: red" >*</span></label>
                       </div>
                       <div class="form-group">
                           {% render_field form.group class="form-control" placeholder="Group" %}

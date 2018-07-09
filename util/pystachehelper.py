@@ -1,5 +1,5 @@
 import pystache
-
+import copy
 def pystache_template_parsekeys(template):
     # fragile, relies on pystache internals
     parsed_template = pystache.parse(template)
@@ -23,7 +23,11 @@ def get_configurable_tags(template):
         'customer',
         'location',
         'product',
-        'reference'
+        'reference',
+        'node',
+        '_link_hostname',
+        '_link_ipv4',
+        '_link_ipv6'
     ]
     # Here logic to handle inventory
 
@@ -33,3 +37,34 @@ def get_configurable_tags(template):
             tags.remove(defaulttag)
 
     return tags
+
+class PystacheHelpers:
+    FORM_TAGS =  [
+        'customer',
+        'location',
+        'product',
+        'reference'
+    ]
+
+    LINK_TAGS = [
+        '_link_hostname',
+        '_link_ipv4',
+        '_link_ipv6'
+    ]
+
+    def parse_template_tags(self, template):
+        result = {
+            'form_tags': set(),
+            'link_tags': set()
+        }
+        tags = pystache_template_parsekeys(template)
+        result['all_tags'] = list(tags)
+        for tag in self.FORM_TAGS:
+            if tag in tags:
+                result['form_tags'].add(tag)
+        for tag in self.LINK_TAGS:
+            if tag in tags:
+                result['link_tags'].add(tag)
+        result['user_tags'] = tags
+
+        return result

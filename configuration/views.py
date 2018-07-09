@@ -8,7 +8,7 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from util.templatehelpers import abbr_on_template
-from util.pystachehelper import get_configurable_tags
+from util.pystachehelper import get_configurable_tags, PystacheHelpers
 from util.validators import ViconfValidators
 
 import re
@@ -17,7 +17,7 @@ import json
 import copy
 import pystache
 
-from .models import Template, Form, Service, FormForm, Config
+from .models import Template, Form, Service, FormForm, Config, Link
 from nodes.models import Node
 
 # Templates view
@@ -233,13 +233,14 @@ def service_provision(request):
         return render(request, "services/provision.djhtml", {'forms': form, 'nodes': nodes, 'products': products, 'dynurl': dynurl })
     elif request.method == 'POST':
         # Process the submitted
+        link_node_id = request.POST.get('link_node_id', None)
         params = {
             'reference': request.POST.get('reference'),
             'customer': request.POST.get('customer', ''),
             'location': request.POST.get('location', ''),
             'product': request.POST.get('product', ''),
             'form_id': request.POST.get('form_id'),
-            'comment': request.POST.get('comment', '')
+            'comment': request.POST.get('comment', ''),
         }
 
         template_fields = dict()
@@ -249,6 +250,11 @@ def service_provision(request):
                 field = param.group(1)
                 template_fields[field] = value
 
+        if link_node_id:
+            link_node = Node.objects.get(pk=link_node_id)
+            template_fields['_link_hostname'] = link_node.hostname
+            template_fields['_link_ipv4'] = link_node.ipv4
+            template_fields['_link_ipv6'] = link_node.ipv6
 
         params['template_fields'] = json.dumps(template_fields)
         node = Node.objects.get(pk=request.POST.get('node'))
@@ -259,6 +265,11 @@ def service_provision(request):
         service = Service(reference=params['reference'], customer=params['customer'], location=params['location'], product=params['product'], template_fields=params['template_fields'], node=params['node'], form=params['form'])
         service.save()
 
+        if link_node_id:
+            link = Link(service=service)
+            link.save()
+            link.node.add(node, link_node)
+
         return HttpResponseRedirect(reverse('configuration:renderservice', kwargs={'service_id': service.id }))
 
 
@@ -268,11 +279,20 @@ def service_dynamic(request, pk):
     defaults = dict()
     all_tags = set()
     all_fields = dict()
+    link_tags = set()
+    nodes = Node.objects.all()
+    pt = PystacheHelpers()
     for template in form.templates.all():
-        for tag in get_configurable_tags(template.up_contents):
+        up_template_tags = pt.parse_template_tags(template.up_contents)
+        down_template_tags = pt.parse_template_tags(template.down_contents)
+        for tag in up_template_tags['user_tags']:
             all_tags.add(tag)
-        for tag in get_configurable_tags(template.down_contents):
+        for tag in down_template_tags['user_tags']:
             all_tags.add(tag)
+        for tag in up_template_tags['link_tags']:
+            link_tags.add(tag)
+        for tag in down_template_tags['link_tags']:
+            link_tags.add(tag)
         fields = json.loads(template.fields)
         for field, klass in fields.items():
             if field not in all_fields:
@@ -286,7 +306,7 @@ def service_dynamic(request, pk):
             if all_fields[tag] != 'none':
                 defaults[tag]["css_class"] = validators[all_fields[tag]]["css_class"]
 
-    return render(request, "services/dynamic.djhtml", { 'defaults': defaults })
+    return render(request, "services/dynamic.djhtml", { 'defaults': defaults, 'link_tags': link_tags, 'nodes': nodes })
 
 def validate_reference(request):
     reference = request.GET.get('reference', None)

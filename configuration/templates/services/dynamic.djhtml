@@ -2,7 +2,6 @@
 	<div class="panel-options"></div>
       </div>
       <div class="panel-body">
-	<form action="/order/config/save" method="POST" id="configform">
 	  <fieldset>
         {% for element, config in defaults.items %}
 	    <div class="form-group">
@@ -12,7 +11,19 @@
               </div>
 	    </div>
       {% endfor %}
+
 	  </fieldset>
+      {% if link_tags %}
+          <div class="form-group">
+              <label class="col-md-4 control-label">Select B-side Node</label>
+              <div class="col-sm-5">
+                  <select name="link_node_id" class="form-control">
+                      {% for node in nodes %}
+                          <option value="{{ node.id }}">{{ node.hostname }}</option>
+                        {% endfor %}
+                  </select>
+              </div>
+          </div>
+          {% endif %}
         </div>
 	  <button type="submit" class="btn btn-primary">Submit</button>
-	</form>

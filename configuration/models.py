@@ -48,6 +48,11 @@ class Config(models.Model):
     created = models.DateTimeField(auto_now=True)
 
 
+class Link(models.Model):
+    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    node = models.ManyToManyField(Node)
+
+
 class TemplateForm(ModelForm):
     class Meta:
         model = Template
