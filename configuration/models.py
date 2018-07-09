@@ -37,7 +37,7 @@ class Service(models.Model):
     product = models.CharField(max_length=255, null=True)
     form = models.ForeignKey(Form, on_delete=models.CASCADE)
     template_fields = JSONField()
-    deleted = models.BooleanField()
+    deleted = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now=True)
     modified = models.DateTimeField(auto_now=True)
 

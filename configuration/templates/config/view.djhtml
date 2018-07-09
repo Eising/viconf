@@ -1,0 +1,38 @@
+{% extends 'base/base.djhtml' %}
+{% block content %}
+<div class="col-md-10" id="maincontents">
+  <div class="row">
+    <div class="content-box-large">
+      <div class="panel-heading">
+	<h3>Configuration - Service Up</h3>
+  <h6>Target device: <a href="{% url 'nodes:detail' pk=config.service.node.id  %}">{{ config.service.node }}</a></h6>
+      </div>
+      <div class="panel-body">
+	<pre>
+{{ config.up_config }}
+	</pre>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="content-box-large">
+      <div class="panel-heading">
+	<h3>Configuration - Service Down</h3>
+      </div>
+      <div class="panel-body">
+	<pre>
+{{ config.down_config }}
+	</pre>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+
+
+
+{% endblock %}

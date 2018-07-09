@@ -1,0 +1,166 @@
+{% extends 'base/base.djhtml' %}
+{% block content %}
+
+    <div class="col-md-10" id="maincontents">
+        <div class="row" id="order_form">
+            <div class="content-box-large">
+	              <div class="panel-heading">
+	                  <div class="panel-title">Provision Service</div>
+	              </div>
+	              <div class="panel-body">
+	                  <form class="form-horizontal" role="form" method="POST"  id="provisionform"> {% csrf_token %}
+                        <div id="rootwizard">
+                            <div class="navbar">
+                                <div class="navbar-inner">
+                                    <div class="container">
+                                        <ul>
+                                            <li><a href="#tab1" data-toggle="tab">Basic Information</a></li>
+                                            <li><a href="#tab2" data-toggle="tab">Template Data</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-content">
+                                <div class="tab-pane" id="tab1">
+                                    <div class="form-group">
+                                        <label for="inputRef" class="col-sm-2 control-label">Order Reference<span style="color: red" >*</span></label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control reference" id="reference" placeholder="Reference" name="reference">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputLoc" class="col-sm-2 control-label">Node<span style="color: red">*</span> </label>
+                                        <div class="col-sm-10">
+                                            <select name="node" class="form-control required">
+                                                {% for node in nodes %}
+                                                    <option value="" selected>-----------</option>
+                                                    <option value="{{ node.id }}">{{ node.hostname }}</option>
+                                                  {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputCust" class="col-sm-2 control-label">Customer</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputCust" placeholder="Customer" name="customer">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputLoc" class="col-sm-2 control-label">Location</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputLoc" placeholder="Location" name="location">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputProd" class="col-sm-2 control-label">Product</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputProd" placeholder="Product" name="product" list="list" autocomplete="off">
+                                            <datalist id="list">
+                                                {% for service in services %}
+                                                <option value="{{ service }}"></option>
+                                                {% endfor %}
+                                            </datalist>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputForm" class="col-sm-2 control-label">Service Form<span style="color: red">*</span></label>
+                                        <div class="col-sm-10">
+                                            <select class="form-control required" id="inputForm" name="form_id">
+                                                <option value="" selected="selected">Select Service</option>
+                                                {% for form in forms %}
+                                                <option value="{{ form.id }}">{{ form.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputComment" class="col-sm-2 control-label">Comment</label>
+                                        <div class="col-sm-10">
+                                            <textarea class="form-control" placeholder="Comment" rows="3" name="comment"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <ul class="pager wizard">
+                                                <li class="next"><a href="#">Next</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="tab2">
+                                    <div class="form-group">
+                                        Please Select a template first.
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+{% block viewjs %}
+<script type="text/javascript">
+ $(document).ready(function() {
+    var $validator = $("#provisionform").validate({
+	errorElement: "em",
+	errorPlacement: function(error, element) {
+	    // Add the help-block class to the error element
+	    error.addClass("help-block");
+
+	    if (element.prop("type") === "checkbox") {
+		error.insertAfter(element.parent("label"));
+	    } else {
+		error.insertAfter(element);
+	    }
+	},
+	highlight: function(element, errorClass, validClass) {
+	    $(element).parents(".col-sm-5").addClass("has-error").removeClass("has-success");
+	},
+	unhighlight: function(element, errorClass, validClass) {
+	    $(element).parents(".col-sm-5").addClass("has-success").removeClass("has-error");
+	},
+        rules: {
+            reference: {
+                required: true,
+                remote: '{% url 'configuration:checkref' %}'
+            }
+        },
+
+    });
+    $("#rootwizard").bootstrapWizard({
+        'tabClass': 'nav nav-pills',
+        'onNext': function(tab, navigation, index) {
+            var $valid = $("#provisionform").valid();
+            if (!$valid) {
+                $validator.focusInvalid();
+                return false;
+            }
+        },
+      'onTabClick': function(tab, navigation, index) {
+            var $valid = $("#provisionform").valid();
+            if (!$valid) {
+                $validator.focusInvalid();
+                return false;
+            }
+
+        }
+
+    });
+    $("#inputForm").on('change', function() {
+        if (this.value) {
+            $("#tab2").load("{{ dynurl }}/"+ this.value + "/");
+        }
+    });
+});
+
+
+</script>
+{% endblock %}

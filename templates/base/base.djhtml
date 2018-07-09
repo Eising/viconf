@@ -80,6 +80,7 @@
                     <li><a href="{% url 'configuration:provision' %}"><i class="glyphicon glyphicon-cog"></i> Provision Service</a></li>
                     <li><a href="{% url 'configuration:forms' %}"><i class="glyphicon glyphicon-tasks"></i> Service Forms</a></li>
                     <li><a href="{% url 'configuration:templates' %}"><i class="glyphicon glyphicon-pencil"></i> Templates</a></li>
+                    <li><a href="{% url 'configuration:services' %}"><i class="glyphicon glyphicon-book"></i> Services</a></li>
                 </ul>
         </div>
       </div>
@@ -130,6 +131,7 @@
     <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
 
     <script src="{% static 'vendors/form-helpers/js/bootstrap-formhelpers.min.js' %}"></script>
+    <script src="{% static 'vendors/jquery.validate.min.js' %}"></script>
 
     <script src="{% static 'vendors/select/bootstrap-select.min.js' %}"></script>
 
@@ -151,6 +153,7 @@
     <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
 	  <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 
+    <script src="{% url 'configuration:validatorsjs' %}"></script>
     <script src="{% static 'js/custom.js' %}" ></script>
     <script src="{% static 'js/forms.js' %}"></script>
     {% block viewjs %}

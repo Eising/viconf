@@ -1,0 +1,60 @@
+{% extends 'base/base.djhtml' %}
+{% block content %}
+{% load widget_tweaks %}
+<div class="col-md-10" id="maincontents">
+  <div class="row">
+    <div class="content-box-large">
+      <div class="panel-heading">
+	<div class="panel-title">Add/Modify node</div>
+	<div class="panel-options"></div>
+      </div>
+      <div class="panel-body">
+          <div class="content-box-large">
+              <form method="POST">{% csrf_token %}
+                  <fieldset>
+                      <div class="form-group">
+                          <label>Hostname</label>
+                      </div>
+                      <div class="form-group">
+                          {% render_field form.hostname class="form-control required" placeholder="Hostname" %}
+                      </div>
+                      <div class="form-group">
+                          <label>Driver</label>
+                      </div>
+                      <div class="form-group">
+                          {% render_field form.driver class="form-control required" placeholder="Hostname" %}
+                      </div>
+
+                      <div class="form-group">
+                          <label>IPv4 Address</label>
+                      </div>
+                      <div class="form-group">
+                          {% render_field form.ipv4 class="form-control required validateipv4" placeholder="IPv4 Address" %}
+                      </div>
+                      <div class="form-group">
+                          <label>IPv6 Address</label>
+                      </div>
+                      <div class="form-group">
+                          {% render_field form.ipv6 class="form-control validateipv6" placeholder="IPv6 Address" %}
+                      </div>
+                      <div class="form-group">
+                          <label>Group</label>
+                      </div>
+                      <div class="form-group">
+                          {% render_field form.group class="form-control" placeholder="Group" %}
+                      </div>
+                      <div class="form-group">
+                          <label>Comment</label>
+                      </div>
+                      <div class="form-group">
+                          {% render_field form.comment class="form-control" placeholder="Comment" %}
+                      </div>
+                  </fieldset>
+                  <button class="btn btn-primary" type="submit">Submit</button>
+              </form>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
