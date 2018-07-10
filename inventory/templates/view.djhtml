@@ -9,7 +9,7 @@
       </div>
       <div class="panel-body">
 
-            <form method="POST" action="" id="rowtable">{% csrf_token %}
+            <form method="POST" action="{% url 'inventory:addrow' pk=inventory.id %}" id="rowtable">{% csrf_token %}
                 <input type="hidden" name="inventory_id" value="<%= @inventory.id %>">
               <table class="table table-striped table-bordered" id="inventorytable" >
                   <thead>

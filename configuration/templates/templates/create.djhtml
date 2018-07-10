@@ -56,7 +56,7 @@
                         {% verbatim %}
                             <p>Input your template here. Use {{ }} around variables. When you submit your template, you will be asked to define your variables as certain types.</p>
                             <p>The following built-in fields are supported: <pre>{{reference}}, {{customer}}, {{location}}</pre></p>
-                            <p>To refer to inventory tables, use the following syntax: <pre>{{inventory__inventoryname__field__lookupfield}}</pre> where field is the field to be inserted in the template, and the lookupfield is the field you would select in a dropdown</p>
+                            <p>To refer to inventory tables, use the following syntax: <pre>{{_i_inventoryname__field__lookupfield}}</pre> where field is the field to be inserted in the template, and the lookupfield is the field you would select in a dropdown</p>
                             <p>To link to a B-node, use the following tags:<pre>{{_link_hostname}}, {{_link_ipv4}}, {{_link_ipv6}}</pre>This will insert the hostname, IPv4 address or IPv6 address of the B-node respectively.</p>
 
                         {% endverbatim %}

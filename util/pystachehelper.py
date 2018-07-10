@@ -1,5 +1,6 @@
 import pystache
 import copy
+import re
 def pystache_template_parsekeys(template):
     # fragile, relies on pystache internals
     parsed_template = pystache.parse(template)
@@ -55,7 +56,8 @@ class PystacheHelpers:
     def parse_template_tags(self, template):
         result = {
             'form_tags': set(),
-            'link_tags': set()
+            'link_tags': set(),
+            'inventory_tags': set()
         }
         tags = pystache_template_parsekeys(template)
         result['all_tags'] = list(tags)
@@ -65,6 +67,13 @@ class PystacheHelpers:
         for tag in self.LINK_TAGS:
             if tag in tags:
                 result['link_tags'].add(tag)
+
+        res = re.compile(r'^_i_(.+)$')
+        for tag in tags:
+            match = res.match(tag)
+            if match is not None:
+                result['inventory_tags'].add(tuple(match.group(1).split("__")))
+
         result['user_tags'] = tags
 
         return result
