@@ -1,0 +1,188 @@
+{% extends 'base/base.djhtml' %}
+{% block content %}
+<div class="col-md-10" id="maincontents">
+    <div class="row" id="inventory_form" >
+      <form method="POST" id="inventoryform">{% csrf_token %}
+        <div class="content-box-large" >
+            <div class="panel-heading">
+                <div class="panel-title"><h3>Create Inventory</h3></div>
+            </div>
+            <div class="panel-body">
+                  <div id="rootwizard">
+                      <div class="navbar">
+                          <div class="navbar-inner">
+                              <div class="container">
+                                  <ul>
+                                      <li><a href="#tab1" data-toggle="tab" >Basic Information</a></li>
+                                      <li><a href="#tab2" data-toggle="tab">Fields</a></li>
+                                      <li><a href="#tab3" data-toggle="tab">Submit</a></li>
+                                  </ul>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="tab-content">
+                          <div class="tab-pane" id="tab1">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Inventory Name</label>
+                                <div class="col-sm-2">
+                                    <input type="text"  class="form-control required" name="name" placeholder="Enter Inventory Name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <ul class="pager wizard">
+                                        <li class="previous"><a href="#">Previous</a></li>
+                                        <li class="next"><a href="#">Next</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                          </div>
+                          <div class="tab-pane" id="tab2">
+                              <div class="form-group">
+                                  <label class="col-md-2 control-label">Add field</label>
+                                  <div class="col-sm-2">
+                                      <input type="text" class="form-control" name="fieldname" placeholder="Enter field name" id="fieldname" >
+                                  </div>
+                                  <div class="col-sm-2">
+                                      <select class="form-control" name="fieldclass" id="fieldclass" placeholder="Select field type or validator">
+                                          <option value="string">String</option>
+                                          <option value="digits">Digits</option>
+                                          {% for validator, detail in validators.items %}
+                                              <option value="{{ validator }}"> {{ detail.description }}</option>
+                                          {% endfor %}
+
+                                      </select>
+                                  </div>
+                                  <div class="col-sm-2">
+                                      <a href="#"> <button type="button" id="addfieldbtn" class="btn btn-success">Add Field</button></a>
+                                  </div>
+
+                              </div>
+                              <div class="form-group">
+                                  <div class="col-sm-offset-2 col-sm-10">
+                                      <ul class="pager wizard">
+                                        <li class="previous"><a href="#">Previous</a></li>
+                                        <li class="next"><a href="#">Next</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="tab-pane" id="tab3">
+
+                            <div class="form-group col-md-6">
+                                <button type="submit" class="btn btn-success">Submit</button>
+                            </div>
+
+                        </div>
+
+                      </div>
+                  </div>
+                     <span class="row help-block">
+                        <div id="errormsg"></div>
+                    </span>
+            </div>
+        </div>
+
+
+                <div class="content-box-header panel-heading">
+                    <div class="panel-title"><h3>Inventory preview</h3></div>
+                </div>
+                <div class="content-box-large box-with-header">
+                    <div class="row">
+                        <div class="form-group" id="customfields">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block viewjs %}
+    <script type="text/javascript">
+     $(document).ready(function(){
+    $("#addfieldbtn").click(function(){
+        var fieldname = $("#fieldname").val();
+        if ($("#" + fieldname +"row").length) {
+            $("#errormsg").html("<em class=\"has-error\">Duplicate name</em>");
+        }
+        else {
+            $("#errormsg").html("")
+            var fieldclass = $("#fieldclass").val();
+            console.log(fieldclass);
+            $("#customfields").append("<div class=\"col-md\" id=\""+ fieldname +"row\"><input type=\"hidden\" name=\"field." + fieldname +"\" value=\""+ fieldclass + "\" class=\"customfield\"><div class=\"col-sm-2\"><input class=\"form-control\" disabled=\"disabled\" type=\"text\" value=\""+ fieldname + " ("+ fieldclass + ")\"><button type=\"button\" id=\""+ fieldname +"\" class=\"removalbutton btn btn-danger btn-xs\">Remove</button></div></div>");
+        }
+            $("#fieldname").val("");
+            $("#fieldname").focus();
+    });
+
+
+
+    $("#inventoryform").validate({
+	errorElement: "em",
+	errorPlacement: function(error, element) {
+	    // Add the help-block class to the error element
+	    error.addClass("help-block");
+
+	    if (element.prop("type") === "checkbox") {
+		error.insertAfter(element.parent("label"));
+	    } else {
+		error.insertAfter(element);
+	    }
+	},
+	highlight: function(element, errorClass, validClass) {
+	    $(element).parents(".col-sm-2").addClass("has-error").removeClass("has-success");
+	},
+	unhighlight: function(element, errorClass, validClass) {
+	    $(element).parents(".col-sm-2").addClass("has-success").removeClass("has-error");
+	}
+    });
+
+
+    $("#inventoryform").submit(function(event){
+        if ($(".customfield").length) {
+            return;
+        }
+        else {
+            $("#errormsg").html("<em class=\"has-error\">Must have at least one field</em>");
+            event.preventDefault();
+        }
+    });
+
+
+
+
+});
+
+$(document).on("click", ".removalbutton", function(event){
+    var target = event.target.id;
+    $("#"+ target +"row").remove();
+
+});
+
+    $("#rootwizard").bootstrapWizard({
+        'tabClass': 'nav nav-pills',
+        'onNext': function(tab, navigation, index) {
+            var $valid = $("#inventoryform").valid();
+            if (!$valid) {
+                $validator.focusInvalid();
+                return false;
+            }
+        },
+      'onTabClick': function(tab, navigation, index) {
+            var $valid = $("#inventoryform").valid();
+            if (!$valid) {
+                $validator.focusInvalid();
+                return false;
+            }
+
+        }
+
+     });
+
+
+    </script>
+{% endblock %}

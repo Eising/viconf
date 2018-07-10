@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'nodes.apps.NodesConfig',
     'api.apps.ApiConfig',
     'configuration.apps.ConfigurationConfig',
+    'inventory.apps.InventoryConfig',
     'rest_framework',
     'widget_tweaks',
     'django_celery_results',

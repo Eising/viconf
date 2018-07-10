@@ -1,0 +1,84 @@
+{% extends 'base/base.djhtml' %}
+{% block content %}
+    {% load indirect %}
+<div class="col-md-10" id="maincontents">
+  <div class="row">
+    <div class="content-box-large">
+      <div class="panel-heading">
+          <div class="panel-title">{{ inventory.fields.name }}</div>
+      </div>
+      <div class="panel-body">
+
+            <form method="POST" action="" id="rowtable">{% csrf_token %}
+                <input type="hidden" name="inventory_id" value="<%= @inventory.id %>">
+              <table class="table table-striped table-bordered" id="inventorytable" >
+                  <thead>
+                      <tr>
+                          {% for column in columns %}
+                              <th>{{ column }}</th>
+                          {% endfor %}
+                          <th></th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% for row in children %}
+                          <tr>
+
+                              {% for key in columns %}
+                                  <td><a href="#" id="{{ key }}" data-type="text" data-pk="{{ row.id }}" data-name="{{ key }}" data-url="{% url 'inventory:jsonupdaterow' %}" data-placeholder="Required" class="editable editable-click">{% indirect row.fields key %}</a> </td>
+                              {% endfor %}
+                              <td><a href="#" data-href="{% url 'inventory:deleterow' pk=inventory.id row_id=row.id %}" data-toggle="modal" data-target="#confirm-delete"><button class="btn btn-danger" type="button" data-href="{% url 'inventory:deleterow' pk=inventory.id row_id=row.id %}" data-toggle="modal"  data-target="#confirm-delete" >Delete</button></a> </td>
+                          </tr>
+                      {% endfor %}
+
+                    </tbody>
+                      <tfoot>
+                      <tr>
+                          {% for key in columns %}
+                                <td><input class="form-control" type="text" name="key.{{ key }}" placeholder="{{ key }}"></td>
+                          {% endfor %}
+
+                            <td><button type="submit" class="btn btn-success">Add</button></td>
+                      </tr>
+
+                      </tfoot>
+              </table>
+                        </form>
+                        <ul>
+                            <li><a href="/inventories/generate_template/<%= @inventory.id %>">Download XLSX template for import</a></li>
+                            <li><a href="/inventories/upload/<%= @inventory.id %>">Upload XLSX data</a></li>
+                        </ul>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+
+{% block viewjs %}
+    <script type="text/javascript">
+     $(document).ready(function(){
+         var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+         function csrfSafeMethod(method) {
+             // these HTTP methods do not require CSRF protection
+             return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+         }
+         $.ajaxSetup({
+             beforeSend: function(xhr, settings) {
+                 if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                     xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                 }
+             }
+         });
+
+         $('.editable').editable();
+         $('#inventorytable').dataTable({
+             "order": []
+         });
+     });
+
+    </script>
+
+{% endblock %}

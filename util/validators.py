@@ -1,3 +1,4 @@
+import re
 class ViconfValidators:
     VALIDATORS = {
         'string': {
@@ -56,3 +57,23 @@ class ViconfValidators:
                     'start': 1,
                     'type': 'range'}
         }
+
+    def validate(self, validator, tester):
+        if validator not in self.VALIDATORS:
+            raise "Unknown validator"
+        validator = self.VALIDATORS[validator]
+        if validator['type'] == 'regex':
+            regex = re.compile(validator['regex'])
+            if regex.match(tester):
+                return True
+            else:
+                return False
+        elif validator['type'] == 'range':
+            number = int(tester)
+            ran = range(validator['start'], validator['end'])
+            if number in ran:
+                return True
+            else:
+                return False
+        else:
+            return True

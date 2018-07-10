@@ -21,6 +21,7 @@ Try this docker-compose file:
       image: tianon/true
       volumes:
         - /var/lib/postgresql/data
+        - /data
 
     viconf-db:
       image: postgres
@@ -40,17 +41,18 @@ Try this docker-compose file:
         DB_NAME: viconf
         DB_SERVICE: viconf-db
         DB_PORT: 5432
+        REDIS_PASSWORD: SOMEPASS
       ports:
         - "8000:8000"
       depends_on:
         - viconf-db
 
-    rabbitmq:
-      image: rabbitmq:latest
+    redis:
+      image: bitnami/redis
       environment:
-        - RABBITMQ_DEFAULT_USER=admin
-        - RABBITMQ_DEFAULT_PASS=pass123
-      ports:
-        - "5673:5673"
+        REDIS_PASSWORD: SOMEPASS
+      volumes_from:
+        - viconf-db_data
+
 
 #+END_SRC

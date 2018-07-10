@@ -31,8 +31,8 @@ class TemplateList(generic.ListView):
 
 def template_view(request, pk):
     template = get_object_or_404(Template, pk=pk)
-    up_contents =  abbr_on_template(template.up_contents, json.loads(template.fields))
-    down_contents = abbr_on_template(template.down_contents, json.loads(template.fields))
+    up_contents =  abbr_on_template(template.up_contents, template.fields)
+    down_contents = abbr_on_template(template.down_contents, template.fields)
     return render(request, 'templates/view.djhtml', {'template': template, 'up_contents': up_contents, 'down_contents': down_contents })
 
 
@@ -99,7 +99,7 @@ def template_tags(request, template_id):
             param = re.match(r'^tag\.(\S+)$', key)
             if param is not None:
                 tags[param.group(1)] = value
-        template.fields = json.dumps(tags)
+        template.fields = tags
         template.save()
 
         return HttpResponseRedirect(reverse('configuration:templates'))
@@ -118,7 +118,7 @@ def form_list(request):
 
 def form_view(request, pk):
     form = get_object_or_404(Form, pk=pk)
-    defaults = json.loads(form.defaults)
+    defaults = form.defaults
 
     return render(request, 'forms/view.djhtml', { 'form': form, 'defaults': defaults})
 
@@ -175,7 +175,7 @@ def actual_form_create(**kwargs):
     if 'form_id' in kwargs:
         form_id = kwargs['form_id']
         form = get_object_or_404(Form, pk=form_id)
-        tdefaults = json.loads(form.defaults)
+        tdefaults = form.defaults
         for tag in tags:
             if tag in tdefaults:
                 defaults[tag] = { 'name': tdefaults[tag]['name'], 'value': tdefaults[tag]['value'] }
@@ -207,7 +207,7 @@ def form_config(request):
                 elif keytype == 'name':
                     defaults[field]["name"] = value
 
-        defaults = json.dumps(defaults)
+        defaults = defaults
         params = copy.deepcopy(request.POST)
         params['defaults'] = defaults
         templates = list()
@@ -278,7 +278,7 @@ def service_provision(request):
             template_fields['_link_ipv4'] = link_node.ipv4
             template_fields['_link_ipv6'] = link_node.ipv6
 
-        params['template_fields'] = json.dumps(template_fields)
+        params['template_fields'] = template_fields
         node = Node.objects.get(pk=request.POST.get('node'))
         form = Form.objects.get(pk=request.POST.get('form_id'))
         params['node'] = node
@@ -319,12 +319,12 @@ def service_dynamic(request, pk):
             link_tags.add(tag)
         for tag in down_template_tags['link_tags']:
             link_tags.add(tag)
-        fields = json.loads(template.fields)
+        fields = template.fields
         for field, klass in fields.items():
             if field not in all_fields:
                 all_fields[field] = klass
 
-    defaults = json.loads(form.defaults)
+    defaults = form.defaults
     validators = ViconfValidators.VALIDATORS
 
     for tag in all_tags:
@@ -360,7 +360,7 @@ def service_config(request, pk):
 def render_service(request, service_id):
     service = get_object_or_404(Service, pk=service_id)
 
-    params = json.loads(service.template_fields)
+    params = service.template_fields
     params['customer'] = service.customer
     params['location'] = service.location
     params['reference'] = service.reference
