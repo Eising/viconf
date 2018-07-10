@@ -361,9 +361,10 @@ def render_service(request, service_id):
     service = get_object_or_404(Service, pk=service_id)
 
     params = service.template_fields
+    params['reference'] = service.reference
     params['customer'] = service.customer
     params['location'] = service.location
-    params['reference'] = service.reference
+    params['node'] = service.node
     up_template = []
     down_template = []
 
