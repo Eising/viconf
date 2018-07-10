@@ -77,6 +77,11 @@ def template_delete(request, pk):
 
 def template_tags(request, template_id):
     template = get_object_or_404(Template, pk=template_id)
+    # Mark all associated forms as require update
+    for form in template.form_set.all():
+        form.require_update = True
+        form.save()
+
     if request.method == 'GET':
         up_template = template.up_contents
         down_template = template.down_contents
@@ -129,10 +134,10 @@ def form_create(request, pk=None):
             name = form.name
             description = form.description
             templates = []
-            for template in form.templates:
-                templates.add(template)
+            for template in form.templates.all():
+                templates.append(str(template.id))
 
-            templates = ",".join(templates)
+#            templates = ",".join(templates)
 
             kwargs = {'name': name, 'description': description, 'templates': templates, 'form_id': form.id, 'request': request }
 
@@ -164,13 +169,24 @@ def actual_form_create(**kwargs):
 
     templates = ",".join(templates)
 
-    if 'form_id' in kwargs:
-        form = get_object_or_404(Form, pk=form_id)
-        defaults = json.loads(form.defaults)
+    defaults = dict()
 
+
+    if 'form_id' in kwargs:
+        form_id = kwargs['form_id']
+        form = get_object_or_404(Form, pk=form_id)
+        tdefaults = json.loads(form.defaults)
+        for tag in tags:
+            if tag in tdefaults:
+                defaults[tag] = { 'name': tdefaults[tag]['name'], 'value': tdefaults[tag]['value'] }
+            else:
+                defaults[tag] ={ 'name': '', 'value': '' }
         return render(request, "forms/config.djhtml", {'name': name, 'description': description, 'tags': tags, 'templates': templates, 'form': form, 'defaults': defaults })
     else:
-        return render(request, "forms/config.djhtml", {'name': name, 'description': description, 'tags': tags, 'templates': templates })
+        for tag in tags:
+            defaults[tag] ={ 'name': '', 'value': '' }
+
+        return render(request, "forms/config.djhtml", {'name': name, 'description': description, 'tags': tags, 'templates': templates, 'defaults': defaults })
 
 
 
@@ -201,7 +217,13 @@ def form_config(request):
 
         params['templates'] = templates
         print(params, file=sys.stderr)
-        form = Form(name=params['name'], description=params['description'], defaults=defaults)
+        if request.POST.get('form_id'):
+            form_id = request.POST.get('form_id')
+            form = Form.objects.get(pk=form_id)
+            form.defaults = defaults
+            form.require_update = False
+        else:
+            form = Form(name=params['name'], description=params['description'], defaults=defaults)
         form.save()
         for template in templates:
             form.templates.add(template)
@@ -225,7 +247,7 @@ def form_delete(request, pk):
 # Service Provisioning
 
 def service_provision(request):
-    form = Form.objects.exclude(deleted=True)
+    form = Form.objects.exclude(deleted=True).exclude(require_update=True)
     if request.method == 'GET':
         products = Service.objects.exclude(deleted=True, product__isnull=True).distinct('product')
         nodes = Node.objects.all()
