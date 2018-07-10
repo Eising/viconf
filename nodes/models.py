@@ -15,10 +15,11 @@ class Node(models.Model):
         ('junos', 'Juniper JUNOS'),
         ('iosxr', 'Cisco IOS-XR'),
         ('nxos', 'Cisco NXOS'),
-        ('ios', 'Cisco IOS')
+        ('ios', 'Cisco IOS'),
+        ('none', 'No driver')
     )
 
-    hostname = models.CharField(max_length=255)
+    hostname = models.CharField(max_length=255, unique=True)
     ipv4 = models.CharField(max_length=255, blank=True)
     ipv6 = models.CharField(max_length=255, blank=True)
     driver = models.CharField(max_length=255, choices=DRIVERS)

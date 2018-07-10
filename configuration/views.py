@@ -269,6 +269,10 @@ def service_provision(request):
             link = Link(service=service)
             link.save()
             link.node.add(node, link_node)
+        else:
+            link = Link(service=service)
+            link.save()
+            link.node.add(node)
 
         return HttpResponseRedirect(reverse('configuration:renderservice', kwargs={'service_id': service.id }))
 
