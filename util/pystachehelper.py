@@ -57,23 +57,29 @@ class PystacheHelpers:
         result = {
             'form_tags': set(),
             'link_tags': set(),
-            'inventory_tags': set()
+            'inventory_tags': set(),
         }
         tags = pystache_template_parsekeys(template)
         result['all_tags'] = list(tags)
+        result['user_tags'] = list(tags)
+
         for tag in self.FORM_TAGS:
             if tag in tags:
+                result['user_tags'].remove(tag)
                 result['form_tags'].add(tag)
         for tag in self.LINK_TAGS:
             if tag in tags:
+                result['user_tags'].remove(tag)
                 result['link_tags'].add(tag)
 
         res = re.compile(r'^_i_(.+)$')
         for tag in tags:
             match = res.match(tag)
             if match is not None:
-                result['inventory_tags'].add(tuple(match.group(1).split("__")))
+                result['user_tags'].remove(tag)
+                result['inventory_tags'].add(match.group(1))
 
-        result['user_tags'] = tags
+
+        result['all_tags'] = tags
 
         return result

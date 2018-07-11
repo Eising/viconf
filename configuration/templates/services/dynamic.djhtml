@@ -25,5 +25,20 @@
               </div>
           </div>
           {% endif %}
+          {% if inventories %}
+                  <div class="form-group" >
+                      {% for inventory, optlist in inventories.items %}
+                          <label class="col-md-4 control-label" >Select from inventory {{ inventory }}</label>
+                            <div class="col-sm-5">
+                                <select class="required form-control" name="inv.{{ inventory }}">
+                                    {% for name, value, id in optlist %}
+                                    <option value="{{ id }}">{{ name }}: {{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                      {% endfor %}
+                  </div>
+          {% endif %}
+
         </div>
 	  <button type="submit" class="btn btn-primary">Submit</button>

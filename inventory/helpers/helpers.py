@@ -37,3 +37,39 @@ class InventoryHelpers:
         inventory = Inventory(parent=parent, fields=entries)
         inventory.save()
         return inventory
+
+    def fetch_inventory_tuple(tag):
+        (invname, field, selector) = tag
+
+        parent = Inventory.objects.filter(fields__name=invname).first()
+
+        data = list()
+
+        for inventory in parent.inventory_set.all():
+            data.append((inventory.fields[selector], inventory.fields[field]))
+
+        return data
+
+    def fetch_inventory_tuple_with_ids(tag):
+        (invname, field, selector) = tag
+
+        parent = Inventory.objects.filter(fields__name=invname).first()
+
+        data = list()
+
+        for inventory in parent.inventory_set.all():
+            data.append((selector, inventory.fields[selector], inventory.id))
+
+        return data
+
+    def reverse(inventory, pk):
+        parent = Inventory.objects.filter(fields__name=inventory).first()
+        structure = parent.fields['fields']
+
+        row = Inventory.objects.get(pk=pk)
+
+        data = dict()
+        for key in structure.keys():
+            data[key] = row.fields[key]
+
+        return data

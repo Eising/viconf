@@ -10,6 +10,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from util.templatehelpers import abbr_on_template
 from util.pystachehelper import get_configurable_tags, PystacheHelpers
 from util.validators import ViconfValidators
+from inventory.helpers.helpers import InventoryHelpers
 
 import re
 import sys
@@ -153,6 +154,7 @@ def form_create(request, pk=None):
 
 
 def actual_form_create(**kwargs):
+    pt = PystacheHelpers()
     name = kwargs['name']
     description = kwargs['description']
     templates = kwargs['templates']
@@ -160,8 +162,11 @@ def actual_form_create(**kwargs):
 
     tags = set()
     for tid in templates:
-        up_ctags = get_configurable_tags(Template.objects.get(pk=tid).up_contents)
-        down_ctags = get_configurable_tags(Template.objects.get(pk=tid).down_contents)
+
+        up_ctags = pt.parse_template_tags(Template.objects.get(pk=tid).up_contents)['user_tags']
+        #up_ctags = get_configurable_tags(Template.objects.get(pk=tid).up_contents)
+        down_ctags = pt.parse_template_tags(Template.objects.get(pk=tid).down_contents)['user_tags']
+        #down_ctags = get_configurable_tags(Template.objects.get(pk=tid).down_contents)
         for uct in up_ctags:
             tags.add(uct)
         for dct in down_ctags:
@@ -212,11 +217,9 @@ def form_config(request):
         params['defaults'] = defaults
         templates = list()
         for template in params['templates'].split(','):
-            print(template, file=sys.stderr)
             templates.append(Template.objects.get(pk=template))
 
         params['templates'] = templates
-        print(params, file=sys.stderr)
         if request.POST.get('form_id'):
             form_id = request.POST.get('form_id')
             form = Form.objects.get(pk=form_id)
@@ -272,6 +275,14 @@ def service_provision(request):
                 field = param.group(1)
                 template_fields[field] = value
 
+        inventories = dict()
+        for key, value in request.POST.items():
+            param = re.match(r'^inv\.(.*)$', key)
+            if param is not None:
+                inventories[param.group(1)] = value
+
+        template_fields['inventories'] = inventories
+
         if link_node_id:
             link_node = Node.objects.get(pk=link_node_id)
             template_fields['_link_hostname'] = link_node.hostname
@@ -306,6 +317,7 @@ def service_dynamic(request, pk):
     all_tags = set()
     all_fields = dict()
     link_tags = set()
+    inventory_tags = set()
     nodes = Node.objects.all()
     pt = PystacheHelpers()
     for template in form.templates.all():
@@ -319,6 +331,11 @@ def service_dynamic(request, pk):
             link_tags.add(tag)
         for tag in down_template_tags['link_tags']:
             link_tags.add(tag)
+        for tag in up_template_tags['inventory_tags']:
+            inventory_tags.add(tag)
+        for tag in down_template_tags['inventory_tags']:
+            inventory_tags.add(tag)
+
         fields = template.fields
         for field, klass in fields.items():
             if field not in all_fields:
@@ -332,7 +349,15 @@ def service_dynamic(request, pk):
             if all_fields[tag] != 'none':
                 defaults[tag]["css_class"] = validators[all_fields[tag]]["css_class"]
 
-    return render(request, "services/dynamic.djhtml", { 'defaults': defaults, 'link_tags': link_tags, 'nodes': nodes })
+    form_inventory = dict()
+    for tag in inventory_tags:
+        parsed_tag = tag.split("__")
+        if len(parsed_tag) == 3:
+            form_inventory[parsed_tag[0]] = InventoryHelpers.fetch_inventory_tuple_with_ids(parsed_tag)
+
+
+
+    return render(request, "services/dynamic.djhtml", { 'defaults': defaults, 'link_tags': link_tags, 'nodes': nodes, 'inventories': form_inventory})
 
 def validate_reference(request):
     reference = request.GET.get('reference', None)
@@ -359,18 +384,41 @@ def service_config(request, pk):
 
 def render_service(request, service_id):
     service = get_object_or_404(Service, pk=service_id)
+    pt = PystacheHelpers()
 
     params = service.template_fields
     params['reference'] = service.reference
     params['customer'] = service.customer
     params['location'] = service.location
     params['node'] = service.node
+    invdata = dict()
+    invtags = set()
     up_template = []
     down_template = []
+
+    for inventoryname, inventoryid in service.template_fields['inventories'].items():
+        keyprefix = "_i_{}".format(inventoryname)
+        for column, value in InventoryHelpers.reverse(inventoryname, inventoryid).items():
+            keyname = "{}__{}".format(keyprefix, column)
+            invdata[keyname] = value
+
+
+
+    # Collect inventory tags
+    for template in service.form.templates.all():
+        for tag in pt.parse_template_tags(template.up_contents)['inventory_tags']:
+            invtags.add("_i_" + tag)
+
+    for tag in invtags:
+        lookup = tag.rsplit("__", 1)[0] # Remove the selector
+        if lookup in invdata:
+            params[tag] = invdata[lookup]
+
 
     for template in service.form.templates.all():
         up_template.append(pystache.render(template.up_contents, params))
         down_template.append(pystache.render(template.down_contents, params))
+
 
     up_template = "\n".join(up_template)
     down_template = "\n".join(down_template)
