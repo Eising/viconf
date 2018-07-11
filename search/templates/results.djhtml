@@ -1,0 +1,60 @@
+{% extends 'base/base.djhtml' %}
+{% block content %}
+
+ <div class="col-md-10" id="maincontents">
+    <div class="row">
+        <div class="content-box-large">
+            <div class="panel-heading">
+                <h3>Search results</h3>
+            </div>
+            <div class="panel-body">
+                Found {{ results }} results.
+                {% if templates %}
+                    <hr>
+                    <h3>Templates</h3>
+                    <ul>
+                        {% for template in templates %}
+                            <li><a href="{% url 'configuration:templateview' pk=template.id %}">{{ template.name }}</a></li>
+                        {% endfor %}
+
+                    </ul>
+                {% endif %}
+                {% if forms %}
+                    <hr>
+                    <h3>Forms</h3>
+                    <ul>
+                        {% for form in forms %}
+                            <li><a href="{% url 'configuration:formview' pk=form.id %}">{{ form.name }}</a></li>
+                        {% endfor %}
+
+                    </ul>
+                {% endif %}
+
+                {% if services %}
+                    <hr>
+                    <h3>Services</h3>
+                    <ul>
+                        {% for service in services %}
+                            <li><a href="{% url 'configuration:serviceconf' pk=service.id %}">{{ service.reference }}</a></li>
+                        {% endfor %}
+
+                    </ul>
+                {% endif %}
+
+                {% if nodes %}
+                    <hr>
+                    <h3>Nodes</h3>
+                    <ul>
+                        {% for node in nodes %}
+                            <li><a href="{% url 'nodes:detail' pk=node.id %}">{{ node.hostname }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -39,7 +39,15 @@
 	           </div>
 	           <div class="col-md-5">
 	              <div class="row">
-	                <div class="col-lg-12">
+	                  <div class="col-lg-12">
+                        <form action="{% url 'search:search' %}" method="GET" id="searchform">
+ 	                          <div class="input-group form">
+	                              <input type="text" class="form-control" autocomplete="off" placeholder="Search..." name="query">
+	                              <span class="input-group-btn">
+	                                  <button class="btn btn-primary" type="submit">Search</button>
+	                              </span>
+	                          </div>
+                        </form>
 	                </div>
 	              </div>
 	           </div>

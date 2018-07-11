@@ -442,7 +442,6 @@ def config_view(request, pk):
     return render(request, "config/view.djhtml", { 'config': config })
 
 
-
 # validators
 
 def validatorjs(request):
