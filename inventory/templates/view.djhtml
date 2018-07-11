@@ -24,7 +24,7 @@
                       {% for row in children %}
                           <tr>
 
-                              {% for key in columns %}
+                              {% for key, validators in columns.items %}
                                   <td><a href="#" id="{{ key }}" data-type="text" data-pk="{{ row.id }}" data-name="{{ key }}" data-url="{% url 'inventory:jsonupdaterow' %}" data-placeholder="Required" class="editable editable-click">{% indirect row.fields key %}</a> </td>
                               {% endfor %}
                               <td><a href="#" data-href="{% url 'inventory:deleterow' pk=inventory.id row_id=row.id %}" data-toggle="modal" data-target="#confirm-delete"><button class="btn btn-danger" type="button" data-href="{% url 'inventory:deleterow' pk=inventory.id row_id=row.id %}" data-toggle="modal"  data-target="#confirm-delete" >Delete</button></a> </td>
@@ -34,8 +34,8 @@
                     </tbody>
                       <tfoot>
                       <tr>
-                          {% for key in columns %}
-                                <td><input class="form-control" type="text" name="key.{{ key }}" placeholder="{{ key }}"></td>
+                          {% for key, validator in columns.items %}
+                                <td><input class="form-control {% validatorclass validator %}" type="text" name="key.{{ key }}" placeholder="{{ key }}"></td>
                           {% endfor %}
 
                             <td><button type="submit" class="btn btn-success">Add</button></td>
@@ -45,8 +45,8 @@
               </table>
                         </form>
                         <ul>
-                            <li><a href="/inventories/generate_template/<%= @inventory.id %>">Download XLSX template for import</a></li>
-                            <li><a href="/inventories/upload/<%= @inventory.id %>">Upload XLSX data</a></li>
+                            <li><a href="{% url 'inventory:generatetemplate' pk=inventory.id %}">Download XLSX template for import</a></li>
+                            <li><a href="{% url 'inventory:importtemplate' pk=inventory.id %}">Upload XLSX data</a></li>
                         </ul>
           </div>
       </div>
@@ -77,7 +77,29 @@
          $('#inventorytable').dataTable({
              "order": []
          });
+         var $validator = $("#rowtable").validate({
+             errorElement: "em",
+             errorPlacement: function(error, element) {
+                 // Add the help-block class to the error element
+                 error.addClass("help-block");
+
+                 if (element.prop("type") === "checkbox") {
+                     error.insertAfter(element.parent("label"));
+                 } else {
+                     error.insertAfter(element);
+                 }
+             },
+             highlight: function(element, errorClass, validClass) {
+                 $(element).parents(".col-sm-5").addClass("has-error").removeClass("has-success");
+             },
+	           unhighlight: function(element, errorClass, validClass) {
+	               $(element).parents(".col-sm-5").addClass("has-success").removeClass("has-error");
+	           },
+
+    });
      });
+
+
 
     </script>
 

@@ -1,0 +1,25 @@
+{% extends 'base/base.djhtml' %}
+{% block content %}
+<div class="col-md-10" id="maincontents">
+  <div class="row">
+    <div class="content-box-large">
+      <div class="panel-heading">
+          <div class="panel-body">
+              <form method="POST" action="" enctype="multipart/form-data">{% csrf_token %}
+                  <div class="form-group">
+                      <label class="col-md-2 control-label" >Select File</label>
+                      <div class="col-md-10">
+                          <input type="file" class="btn btn-default" id="uploadFile" name="file">
+                          <p class="help-block">
+                              Please upload a filled-out version of the import template.
+                          </p>
+                          <button class="btn btn-default" type="submit">Upload</button>
+                      </div>
+                  </div>
+              </form>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

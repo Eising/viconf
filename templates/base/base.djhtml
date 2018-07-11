@@ -17,6 +17,7 @@
     <link href="{% static 'vendors/select/bootstrap-select.min.css' %}" rel="stylesheet">
     <link href="{% static 'vendors/tags/css/bootstrap-tags.css' %}" rel="stylesheet">
 
+
     <link href="css/forms.css" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -142,6 +143,12 @@
     <script src="{% static 'vendors/mask/jquery.maskedinput.min.js' %}"></script>
 
     <script src="{% static 'vendors/moment/moment.min.js' %}"></script>
+
+    <link href="{% static 'vendors/datatables/dataTables.bootstrap.css' %}" rel="stylesheet" media="screen">
+
+    <script src="{% static '/vendors/datatables/js/jquery.dataTables.min.js' %} "></script>
+
+    <script src="{% static '/vendors/datatables/dataTables.bootstrap.js' %}"></script>
 
 
     <script src="{% static 'vendors/wizard/jquery.bootstrap.wizard.min.js' %}"></script>

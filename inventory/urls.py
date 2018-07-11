@@ -11,5 +11,7 @@ urlpatterns = [
     path('<int:pk>/row/add', views.add_row, name='addrow'),
     path('<int:pk>/row/<int:row_id>/delete', views.delete_inventory_row, name='deleterow'),
     path('<int:pk>/delete/', views.delete_inventory, name='deleteinventory'),
+    path('<int:pk>/template/', views.generate_template, name='generatetemplate'),
+    path('<int:pk>/import/', views.upload_template, name='importtemplate'),
     path('json/row/update/', views.update_row, name='jsonupdaterow')
 ]

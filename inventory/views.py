@@ -5,12 +5,16 @@ from django.urls import reverse, reverse_lazy
 from django.views import generic, View
 from util.validators import ViconfValidators
 
+import django_excel as excel
+
 
 from inventory.helpers.helpers import InventoryHelpers
 
 from .models import Inventory
 
 import re
+import sys
+import pprint
 
 # Create your views here.
 
@@ -63,7 +67,7 @@ def delete_inventory_row(request, pk, row_id):
 
 def view_inventory(request, pk):
     inventory = get_object_or_404(Inventory, pk=pk)
-    columns = inventory.fields['fields'].keys()
+    columns = inventory.fields['fields']
     if request.method == 'GET':
         children = Inventory.objects.filter(parent=inventory)
         return render(request, 'view.djhtml', {'inventory': inventory, 'columns': columns, 'children': children})
@@ -98,3 +102,24 @@ def update_row(request):
 
         message = {'message': "Sucessfully updated", 'params': fields}
         return JsonResponse(message)
+
+
+def generate_template(request, pk, export=False):
+    inventory = get_object_or_404(Inventory, pk=pk)
+
+    fields = [inventory.fields['fields'].keys()]
+
+    return excel.make_response_from_array(fields, 'xlsx', file_name="{}.xlsx".format(inventory.fields['name']))
+
+def upload_template(request, pk):
+    inventory = get_object_or_404(Inventory, pk=pk)
+
+    if request.method == 'GET':
+        return render(request, 'upload.djhtml')
+    elif request.method == 'POST':
+
+        data = request.FILES['file'].get_records()
+        for row in data:
+            InventoryHelpers.add_inventory_row(parent=inventory, entries=dict(row))
+
+        return HttpResponseRedirect(reverse('inventory:viewinventory', kwargs={'pk': pk}))
