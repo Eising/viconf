@@ -1,0 +1,42 @@
+{% extends 'base/base.djhtml' %}
+{% block content %}
+<div class="col-md-10" id="maincontents">
+    <div class="row">
+        <div class="content-box-large">
+            <div class="panel-heading">
+                Configuration Request id {{ task.id }}
+            </div>
+            <div class="panel-options">
+                <a href="#" id="refreshbtn"><i class="glyphicon glyphicon-refresh"></i></a>
+            </div>
+            <div class="panel-body">
+                <b>Current state:</b> {{ task.state }}
+                {% if task.diff %}
+                    <h3>Config Diff:</h3>
+                    <pre>
+{{ task.diff }}
+                    </pre>
+                {% endif %}
+
+                {% if task.state == 'READY' %}
+                    <p>Device is ready. Do you want to commit the configuration?</p>
+                    <p><a href="{% url 'task:commit' pk=task.id %}"><button type="button" class="btn btn-danger">Commit</button></a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block viewjs %}
+    <script type="text/javascript" >
+        setInterval("refresh_page();", 5000);
+        function refresh_page(){
+            window.location = location.href;
+        }
+        $("#refreshbtn").click(function(event){
+            window.location = location.href;
+        });
+    </script>
+
+{% endblock %}

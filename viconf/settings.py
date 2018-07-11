@@ -32,10 +32,11 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'nodes.apps.NodesConfig',
-    'api.apps.ApiConfig',
+#    'api.apps.ApiConfig',
     'configuration.apps.ConfigurationConfig',
     'inventory.apps.InventoryConfig',
     'search.apps.SearchConfig',
+    'tasks.apps.TasksConfig',
     'rest_framework',
     'widget_tweaks',
     'django_celery_results',

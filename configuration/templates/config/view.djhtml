@@ -11,6 +11,7 @@
 	<pre>
 {{ config.up_config }}
 	</pre>
+  <a href="{% url 'tasks:push' pk=config.service.id direction='up' %}"><button class="btn btn-default"><i class="glyphicon glyphicon-cloud-upload"></i> Push this configuration</button></a>
       </div>
     </div>
   </div>
@@ -23,6 +24,7 @@
 	<pre>
 {{ config.down_config }}
 	</pre>
+  <a href="{% url 'tasks:push' pk=config.service.id direction='down' %}"><button class="btn btn-default"><i class="glyphicon glyphicon-cloud-upload"></i> Push this configuration</button></a>
       </div>
     </div>
   </div>
