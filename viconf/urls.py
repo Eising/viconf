@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', include('nodes.urls')),
@@ -23,5 +24,10 @@ urlpatterns = [
     path('inventory/', include('inventory.urls')),
     path('config/', include('configuration.urls')),
     path('search/', include('search.urls')),
-    path('provisioning/', include('provisioning.urls'))
+    path('provisioning/', include('provisioning.urls')),
+    path('login/', auth_views.LoginView.as_view(template_name='auth/login.djhtml'), name='login'),
+    path('logout/', auth_views.logout, {'next_page': 'login'}, name='logout'),
+    path('password/', auth_views.PasswordChangeView.as_view(template_name='auth/password.djhtml'), name='changepassword'),
+    path('password/done', auth_views.PasswordChangeDoneView.as_view(template_name='auth/password_changed.djhtml'), name='password_change_done')
+
 ]

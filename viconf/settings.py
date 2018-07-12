@@ -145,6 +145,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# LOGIN
+LOGIN_REDIRECT_URL = 'configuration:provision'
+LOGIN_URL = 'login'
+
+
 # Project includes static files as well
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "viconf/static")
