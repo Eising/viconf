@@ -23,5 +23,5 @@ urlpatterns = [
     path('inventory/', include('inventory.urls')),
     path('config/', include('configuration.urls')),
     path('search/', include('search.urls')),
-
+    path('provisioning/', include('provisioning.urls'))
 ]

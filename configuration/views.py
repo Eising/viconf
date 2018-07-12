@@ -436,6 +436,14 @@ def render_service(request, service_id):
     return HttpResponseRedirect(reverse('configuration:configview', kwargs={'pk': config.id}))
 
 
+def service_delete(request, pk):
+    service = get_object_or_404(Service, pk=pk)
+
+    service.delete()
+
+    return HttpResponseRedirect(reverse('configuration:services'))
+
+
 def config_view(request, pk):
     config = get_object_or_404(Config, pk=pk)
 

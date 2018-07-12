@@ -11,6 +11,7 @@ urlpatterns = [
     path('services/form_dynamic/<int:pk>/', views.service_dynamic, name='servicedynamic'),
     path('services/render/<int:service_id>', views.render_service, name='renderservice'),
     path('services/<int:pk>/config', views.service_config, name='serviceconf'),
+    path('services/<int:pk>/delete', views.service_delete, name='servicedelete'),
     path('json/checkref', views.validate_reference, name='checkref'),
     path('templates/', views.TemplateList.as_view(), name='templates'),
     path('templates/compose', views.TemplateCreate.as_view(), name='templatecompose'),
