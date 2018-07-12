@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'configuration.apps.ConfigurationConfig',
     'inventory.apps.InventoryConfig',
+    'provisioning.apps.ProvisioningConfig',
     'rest_framework',
     'widget_tweaks',
     'django_celery_results',
