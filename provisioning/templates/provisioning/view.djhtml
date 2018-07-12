@@ -25,6 +25,9 @@
                         <p>Device is ready. Do you want to commit the configuration?</p>
                         <p><a href="{% url 'provisioning:commit' pk=configtask.id %}"><button type="button" class="btn btn-danger">Commit</button></a></p>
                     {% endif %}
+                    <p>
+                    <a href="{% url 'configuration:serviceconf' pk=configtask.service.id %}"><button class="btn btn-default"><i class="glyphicon glyphicon-arrow-left"></i> Return to service</button></a>
+                    </p>
                 </div>
             </div>
         </div>

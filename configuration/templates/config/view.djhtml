@@ -26,7 +26,14 @@
 	</pre>
   <a href="{% url 'provisioning:down' pk=config.service.id %}"><button class="btn btn-default btn-xs"><i class="glyphicon glyphicon-cloud-upload"></i> Push this configuration</button></a>
       </div>
+
     </div>
+<div class="panel panel-danger">
+          <div class="panel-heading">Delete Service</div>
+          <div class="panel-body"><a data-href="{% url 'configuration:servicedelete' pk=config.service.id %}" data-toggle="modal" data-target="#confirm-delete"><button class="btn btn-danger" data-href="{% url 'configuration:servicedelete' pk=config.service.id %}" data-toggle="modal" data-target="#confirm-delete"><i class="glyphicon glyphicon-remove"></i> Delete</button></a>
+          </div>
+      </div>
+
   </div>
 
 </div>
