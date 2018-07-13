@@ -4,9 +4,11 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from configuration.models import Template, Form, Service
 from inventory.models import Inventory
 from nodes.models import Node
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
+@login_required
 def search(request):
     # Assume that this is some sort of JSON request with query as 'query'
 

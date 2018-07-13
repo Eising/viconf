@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import get_object_or_404, render
+from django.contrib.auth.decorators import login_required
 
 from .models import ConfigTask
 from configuration.models import Service
@@ -30,12 +31,15 @@ def configure_service(pk, direction):
 
     return HttpResponseRedirect(reverse('provisioning:view', kwargs={'pk': configtask.id}))
 
+@login_required
 def provision_up(request, pk):
     return configure_service(pk=pk, direction='up')
 
+@login_required
 def provision_down(request, pk):
     return configure_service(pk=pk, direction='down')
 
+@login_required
 def view_task(request, pk):
     data = {"somedata": "FOOOO"}
     configtask = get_object_or_404(ConfigTask, pk=pk)
@@ -44,6 +48,7 @@ def view_task(request, pk):
 
     #return JsonResponse(data)
 
+@login_required
 def commit_task(request, pk):
     configtask = get_object_or_404(ConfigTask, pk=pk)
     # Actual logic here

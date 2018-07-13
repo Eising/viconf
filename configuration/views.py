@@ -6,6 +6,8 @@ from django.urls import reverse, reverse_lazy
 from django.views import generic, View
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from util.templatehelpers import abbr_on_template
 from util.pystachehelper import get_configurable_tags, PystacheHelpers
@@ -23,13 +25,14 @@ from nodes.models import Node
 
 # Templates view
 
-class TemplateList(generic.ListView):
+class TemplateList(LoginRequiredMixin, generic.ListView):
     template_name = "templates/list.djhtml"
     context_object_name = "templates"
 
     def get_queryset(self):
         return Template.objects.exclude(deleted=True)
 
+@login_required
 def template_view(request, pk):
     template = get_object_or_404(Template, pk=pk)
     up_contents =  abbr_on_template(template.up_contents, template.fields)
@@ -38,7 +41,7 @@ def template_view(request, pk):
 
 
 
-class TemplateCreate(CreateView):
+class TemplateCreate(LoginRequiredMixin, CreateView):
     model = Template
     template_name = "templates/create.djhtml"
     fields = [
@@ -53,7 +56,7 @@ class TemplateCreate(CreateView):
         templ = self.object
         return reverse_lazy('configuration:templatetags', kwargs={'template_id': templ.id})
 
-class TemplateUpdate(UpdateView):
+class TemplateUpdate(LoginRequiredMixin, UpdateView):
     model = Template
     template_name = "templates/create.djhtml"
     fields = [
@@ -69,6 +72,7 @@ class TemplateUpdate(UpdateView):
 
 
 
+@login_required
 def template_delete(request, pk):
     template = get_object_or_404(Template, pk=pk)
     template.deleted = True
@@ -76,6 +80,7 @@ def template_delete(request, pk):
     return HttpResponseRedirect(reverse('configuration:templates'))
 
 
+@login_required
 def template_tags(request, template_id):
     template = get_object_or_404(Template, pk=template_id)
     # Mark all associated forms as require update
@@ -109,6 +114,7 @@ def template_tags(request, template_id):
 
 # Form views
 
+@login_required
 def form_list(request):
     form = Form.objects.exclude(deleted=True)
 
@@ -117,6 +123,7 @@ def form_list(request):
     else:
         return render(request, "forms/list.djhtml", { 'forms': form })
 
+@login_required
 def form_view(request, pk):
     form = get_object_or_404(Form, pk=pk)
     defaults = form.defaults
@@ -124,6 +131,7 @@ def form_view(request, pk):
     return render(request, 'forms/view.djhtml', { 'form': form, 'defaults': defaults})
 
 
+@login_required
 def form_create(request, pk=None):
     if request.method == 'GET':
         if pk is None:
@@ -197,6 +205,7 @@ def actual_form_create(**kwargs):
 
 
 
+@login_required
 def form_config(request):
     if request.method == 'POST':
         defaults = dict()
@@ -238,6 +247,7 @@ def form_config(request):
 
 
 
+@login_required
 def form_delete(request, pk):
     form = get_object_or_404(Form, pk=pk)
 
@@ -248,7 +258,7 @@ def form_delete(request, pk):
 
 
 # Service Provisioning
-
+@login_required
 def service_provision(request):
     form = Form.objects.exclude(deleted=True).exclude(require_update=True)
     if request.method == 'GET':
@@ -311,6 +321,7 @@ def service_provision(request):
 
 
 
+@login_required
 def service_dynamic(request, pk):
     form = Form.objects.get(pk=pk)
     defaults = dict()
@@ -367,13 +378,14 @@ def validate_reference(request):
         return JsonResponse("true", safe=False)
 
 
-class ServiceIndex(generic.ListView):
+class ServiceIndex(LoginRequiredMixin, generic.ListView):
     template_name = "services/index.djhtml"
     context_object_name = "all_services"
 
     def get_queryset(self):
         return Service.objects.exclude(deleted=True)
 
+@login_required
 def service_config(request, pk):
     service = get_object_or_404(Service, pk=pk)
     config = get_object_or_404(Config, service=service)
@@ -382,6 +394,7 @@ def service_config(request, pk):
 
 # Config
 
+@login_required
 def render_service(request, service_id):
     service = get_object_or_404(Service, pk=service_id)
     pt = PystacheHelpers()
@@ -436,6 +449,7 @@ def render_service(request, service_id):
     return HttpResponseRedirect(reverse('configuration:configview', kwargs={'pk': config.id}))
 
 
+@login_required
 def service_delete(request, pk):
     service = get_object_or_404(Service, pk=pk)
 
@@ -444,6 +458,7 @@ def service_delete(request, pk):
     return HttpResponseRedirect(reverse('configuration:services'))
 
 
+@login_required
 def config_view(request, pk):
     config = get_object_or_404(Config, pk=pk)
 

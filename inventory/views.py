@@ -5,6 +5,8 @@ from django.urls import reverse, reverse_lazy
 from django.views import generic, View
 from util.validators import ViconfValidators
 
+from django.contrib.auth.decorators import login_required
+
 import django_excel as excel
 
 
@@ -18,12 +20,14 @@ import pprint
 
 # Create your views here.
 
+@login_required
 def view_inventories(request):
 
     inventories = Inventory.objects.exclude(deleted=True).filter(parent__isnull=True)
     return render(request, 'index.djhtml', {'inventories': inventories })
 
 
+@login_required
 def add_inventory(request):
 
     if request.method == 'GET':
@@ -46,6 +50,7 @@ def add_inventory(request):
         return HttpResponseRedirect(reverse('inventory:index'))
 
 
+@login_required
 def delete_inventory(request, pk):
     inventory = get_object_or_404(Inventory, pk=pk)
 
@@ -55,6 +60,7 @@ def delete_inventory(request, pk):
 
     return HttpResponseRedirect(reverse('inventory:index'))
 
+@login_required
 def delete_inventory_row(request, pk, row_id):
     inventory = get_object_or_404(Inventory, pk=row_id)
     parent = get_object_or_404(Inventory, pk=pk)
@@ -65,6 +71,7 @@ def delete_inventory_row(request, pk, row_id):
 
 
 
+@login_required
 def view_inventory(request, pk):
     inventory = get_object_or_404(Inventory, pk=pk)
     columns = inventory.fields['fields']
@@ -74,6 +81,7 @@ def view_inventory(request, pk):
 
 
 
+@login_required
 def add_row(request, pk):
     if request.method == 'POST':
         inventory = get_object_or_404(Inventory, pk=pk)
@@ -89,6 +97,7 @@ def add_row(request, pk):
         return HttpResponseRedirect(reverse('inventory:viewinventory', kwargs={'pk': pk}))
 
 
+@login_required
 def update_row(request):
     if request.method == 'POST':
         pk = request.POST.get('pk')
@@ -104,6 +113,7 @@ def update_row(request):
         return JsonResponse(message)
 
 
+@login_required
 def generate_template(request, pk, export=False):
     inventory = get_object_or_404(Inventory, pk=pk)
 
@@ -111,6 +121,7 @@ def generate_template(request, pk, export=False):
 
     return excel.make_response_from_array(fields, 'xlsx', file_name="{}.xlsx".format(inventory.fields['name']))
 
+@login_required
 def upload_template(request, pk):
     inventory = get_object_or_404(Inventory, pk=pk)
 
