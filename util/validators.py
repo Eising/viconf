@@ -1,6 +1,8 @@
 import re
 class ViconfValidators:
     VALIDATORS = {
+        'none': {   'description': 'No validation',
+                    'type': 'novalidation'},
         'string': {
             'description': "Basic String Validation",
             'css_class': 'validatestring',
@@ -30,11 +32,6 @@ class ViconfValidators:
                     'error': 'Must be numbers only',
                     'regex': '^[0-9]+$',
                     'type': 'regex'},
-        'interface': {   'css_class': 'validateinterface',
-                        'description': 'Validates interfaces',
-                        'error': 'Invalid Interface Name',
-                        'regex': '^(GigabitEthernet([0-9]+\/[0-9]+)|TenGigabitEthernet([0-9]+\/[0-9]+)|TenGigE([0-9]+\/[0-9]+\/[0-9]+\/[0-9]+)|Vlan|Bundle-Ether([0-9]+)|GigabitEthernet([0-9]+\/[0-9]+\/[0-9]+)|GigabitEthernet([0-9]+\/[0-9]+\/[0-9]+\/[0-9]+)|(?:xe|ge)-([0-9]+\/[0-9]+\/[0-9]+))$',
-                        'type': 'regex'},
         'ioxif': {   'css_class': 'validatesxriface',
                     'description': 'Validates IOS-XR Interface',
                     'regex': '^(GigabitEthernet|TenGigE|HundredGigE)([0-9+]\/)+([0-9])$',
@@ -49,8 +46,12 @@ class ViconfValidators:
                     'error': 'Invalid IPv6 address',
                     'regex': '^([A-f0-9:]+:+)+[A-f0-9]+$',
                     'type': 'regex'},
-        'none': {   'description': 'No validation',
-                    'type': 'novalidation'},
+         'cidrv6': {   'css_class': 'validatecidr6',
+                    'description': 'Validates IPv6 addresses with /prefix',
+                    'error': 'Invalid IPv6 address',
+                    'regex': '^([A-f0-9:]+:+)+[A-f0-9]+\/[0-9]+$',
+                    'type': 'regex'},
+
         'vlan': {   'css_class': 'validatevlan',
                     'description': 'Validates Vlan',
                     'end': 4094,

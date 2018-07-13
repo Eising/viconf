@@ -1,13 +1,137 @@
 #+TITLE: Viconf
 
-*DISCLAIMER*: This tool is not yet ready to be used at all. Do not even think about testing this yet!
+Viconf is an unassuming network provisioning framework on a shoestring with a
+template-based focus.
 
-A framework for pushing network config to devices.
+Viconf allows you to compose your network templates using a simple markup
+language, and quickcly turn those in to forms, that can be pushed to your routers and switches.
 
-Under heavy development.
+Viconf is still under development.
 
-This tool is meant to stand along Vico - where Vico generates the config, Viconf
-pushes it to the device.
+* Usage
+
+  Viconf has the following workflow:
+  1. Build your templates
+  2. Define your service forms
+  3. Provision your services.
+
+** Templates
+   Templates are a standanlone part of a service. Standalone here means that a
+   template should contain exactly the code to create and delete itself.
+
+   A service can be defined with multiple forms, allowing you to reuse your
+   template code.
+
+   Templates are composed in the [[http://mustache.github.io/mustache.5.html][Mustache(5)]] markup language.
+
+   When you have typed your templates, you need to select a validator for each
+   of your template fields. The validators are typically regular expressions
+   used to validate your input, but can be number ranges too, for VLANs and AS-numbers.
+
+   Included are validators for the following types:
+   - AS-number
+   - IPv4 Address
+   - IPv6 Address
+   - IPv4 CIDR notation
+   - VLAN
+   - AS-number (including 32-bit ASNs)
+   - IOS-XR Interface
+
+
+** Forms
+   A form is a collection of one or more templates that together define a
+   service. Upon selecting your desired templates, you will be asked to input a
+   human readable name and a default value for each variable.
+
+** Provisioning
+   On the provisioning workflow, you can select your service and get an HTML
+   form to fill out. Note that this expect a unique /reference/ number for each
+   service. This will typically be a circuit reference number or similar.
+
+   Once filled, the configuration will be generated, and can be pushed to the device.
+
+   The provisioning framework uses the NAPALM library. Nodes must be defined in
+   order for this to work. When pushing, it will do a "dry run" first, where the
+   configuration will be merged, but not committed. A diff of the merge will be
+   shown, and you can validate whether this is the desired outcome.
+
+** Inventories
+   Viconf allows you to define dynamic inventories that can contain whatever you
+   desire to be able to reference in your templates. You can download an import
+   template, so you can perform a bulk import to your inventory.
+
+   Examples of things you could track:
+   - VRFs
+   - Customer private AS-numbers
+   - BGP Communities
+   - Whatever you desire!
+
+
+* Examples
+
+** Simple BGP Peering service
+   In this example we're going to define a simple BGP peering service, including
+   prefix-lists. It's based on IOS-XR syntax.
+
+*** Templates
+
+**** Template: IPv4 Routed Interface
+#+BEGIN_EXAMPLE
+interface {{interface}}
+ description Cust: {{customer}} [{{reference}}] {{product}}
+ ipv4 address {{prefix}}
+!
+#+END_EXAMPLE
+     Configure =prefix= as /Validates IPv4 CIDR/ and =interface= as /Validates IOS-XR Interface/
+
+**** Template: BGP Default Service
+#+BEGIN_EXAMPLE
+router bgp {{myasn}}
+ neighbor {{peerip}}
+  remote-as {{peerasn}}
+  description {{customer}} [{{reference}}]
+  address-family ipv4 unicast
+   route-policy IPV4-RP-{{peeras}}-{{customer}}-IN in
+   route-policy IPV4-RP-DEFAULT-OUT out
+   maximum-prefix {{maxprefix}} 75 restart 15
+  !
+ !
+!
+route-policy IPV4-RP-{{peeras}}-{{customer}}-IN
+ if destination in IPV4-PL-{{peeras}}-{{customer}}-IN
+  pass
+ else
+  drop
+ endif
+end-policy
+prefix-set IPV4-PL-{{peeras}}-{{customer}}-IN
+ {{#prefixes}}
+  {{.}},
+ {{/prefixes}}
+# end of set
+end-set
+#+END_EXAMPLE
+     Configure the following fields:
+     - =myasn= as /Validates AS-numbers/
+     - =peerip= as /Validates IPv4 Addresses/
+     - =peerasn= as /Validates AS-numbers/
+     - =maxprefix= as /Validates numbers/
+     - =prefixes= as /Validates IPv4 Addresses/ (although lists aren't validated currently)
+
+*** Forms
+    These two templates can be combined in to one Service Form:
+
+**** Form: BGP Default Customer
+     Select the two templates and give all variables human recognicable names.
+     Also define the default for =myasn= as your AS-number so you don't have to type that in all the time.
+
+     Note the template uses the Product built-in variable. This is not a
+     required field, but can be used to add a meaningfull product label to the
+     service, such as "Internet service with Default Route" in this example.
+
+
+
+
 
 * Installation
 Try this docker-compose file:
