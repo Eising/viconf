@@ -1,6 +1,7 @@
 *.sqlite3
 *.env/
 .Python
+.DS_Store
 env/
 build/
 develop-eggs/

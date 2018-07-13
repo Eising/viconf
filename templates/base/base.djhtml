@@ -15,7 +15,7 @@
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link href="{% static 'vendors/form-helpers/css/bootstrap-formhelpers.min.css' %}" rel="stylesheet">
     <link href="{% static 'vendors/select/bootstrap-select.min.css' %}" rel="stylesheet">
-    <link href="{% static 'vendors/tags/css/bootstrap-tags.css' %}" rel="stylesheet">
+    <link href="{% static 'vendors/tagsinput/css/bootstrap-tagsinput.css' %}" rel="stylesheet">
 
 
     <link href="css/forms.css" rel="stylesheet">
@@ -145,8 +145,7 @@
 
     <script src="{% static 'vendors/select/bootstrap-select.min.js' %}"></script>
 
-
-    <script src="{% static 'vendors/tags/js/bootstrap-tags.min.js' %}"></script>
+    <script src="{% static 'vendors/tagsinput/js/bootstrap-tagsinput.min.js' %}"></script>
 
     <script src="{% static 'vendors/mask/jquery.maskedinput.min.js' %}"></script>
 

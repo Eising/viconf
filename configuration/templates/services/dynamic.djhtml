@@ -4,12 +4,22 @@
       <div class="panel-body">
 	  <fieldset>
         {% for element, config in defaults.items %}
+            {% if element in all_lists %}
+                <div class="form-group">
+                    <label class="col-md-4 control-label">{{ config.name }} </label>
+                    <div class="col-sm-5">
+                        <input type="text" name="formlist.{{ element }}" data-validator="{{ config.css_class }}" class="required form-control tagsinput">
+                        <p class="help-block" >Separate multiple values with comma or space</p>
+                    </div>
+                </div>
+            {% else %}
 	    <div class="form-group">
 	      <label class="col-md-4 control-label">{{ config.name }}</label>
 	      <div class="col-sm-5">
             <input type="text" name="form.{{ element }}" class="required form-control {{ config.css_class }}" value="{{ config.value }}">
               </div>
 	    </div>
+      {% endif %}
       {% endfor %}
 
 	  </fieldset>

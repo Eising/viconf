@@ -1,6 +1,7 @@
 import pystache
 import copy
 import re
+import sys
 def pystache_template_parsekeys(template):
     # fragile, relies on pystache internals
     parsed_template = pystache.parse(template)
@@ -16,6 +17,14 @@ def pystache_template_parsekeys(template):
     # return list of unique items
     # (json does not like sets)
     return list(set(keys))
+
+def pystache_list_tags(template):
+    # This is a bit of a dirty monkey patch, and should probably be rewritten
+    # in to a full parser.
+    tags = re.compile(r'\{\{\s*#([^}]+\s*)\}\}')
+    return tags.findall(template)
+
+
 
 def get_configurable_tags(template):
     tags = pystache_template_parsekeys(template)
@@ -58,6 +67,7 @@ class PystacheHelpers:
             'form_tags': set(),
             'link_tags': set(),
             'inventory_tags': set(),
+            'list_tags': pystache_list_tags(template)
         }
         tags = pystache_template_parsekeys(template)
         result['all_tags'] = list(tags)

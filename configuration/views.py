@@ -281,9 +281,13 @@ def service_provision(request):
         template_fields = dict()
         for key, value in request.POST.items():
             param = re.match(r'^form\.(\S+)$', key)
+            listparam = re.match(r'^formlist\.(\S+)$', key)
             if param is not None:
                 field = param.group(1)
                 template_fields[field] = value
+            if listparam is not None:
+                field = listparam.group(1)
+                template_fields[field] = value.split(",")
 
         inventories = dict()
         for key, value in request.POST.items():
@@ -327,6 +331,7 @@ def service_dynamic(request, pk):
     defaults = dict()
     all_tags = set()
     all_fields = dict()
+    all_lists = set()
     link_tags = set()
     inventory_tags = set()
     nodes = Node.objects.all()
@@ -346,6 +351,10 @@ def service_dynamic(request, pk):
             inventory_tags.add(tag)
         for tag in down_template_tags['inventory_tags']:
             inventory_tags.add(tag)
+        for tag in up_template_tags['list_tags']:
+            all_lists.add(tag)
+        for tag in down_template_tags['list_tags']:
+            all_lists.add(tag)
 
         fields = template.fields
         for field, klass in fields.items():
@@ -368,7 +377,7 @@ def service_dynamic(request, pk):
 
 
 
-    return render(request, "services/dynamic.djhtml", { 'defaults': defaults, 'link_tags': link_tags, 'nodes': nodes, 'inventories': form_inventory})
+    return render(request, "services/dynamic.djhtml", { 'defaults': defaults, 'link_tags': link_tags, 'nodes': nodes, 'inventories': form_inventory, 'all_lists': all_lists})
 
 def validate_reference(request):
     reference = request.GET.get('reference', None)
