@@ -21,9 +21,10 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('license', TemplateView.as_view(template_name='base/license.djhtml'), name='license'),
     path('nodes/', include('nodes.urls')),
-    path('api/v1/', include('api.urls')),
+#    path('api/v1/', include('api.urls')),
     path('admin/', admin.site.urls),
     path('inventory/', include('inventory.urls')),
+    path('api/inventory/', include('inventory.api_urls')),
     path('', include('configuration.urls')),
     path('search/', include('search.urls')),
     path('provisioning/', include('provisioning.urls')),
