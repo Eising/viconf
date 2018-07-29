@@ -6,7 +6,7 @@ from django.views import generic
 from django import forms
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .models import Group, Node
+from .models import Group, Node, Site
 
 # Create your views here.
 
@@ -53,6 +53,28 @@ class GroupDetailView(LoginRequiredMixin, generic.DetailView):
 
 class NodeCreateView(LoginRequiredMixin, CreateView):
     model = Node
-    fields = [ 'hostname', 'ipv4', 'ipv6', 'driver', 'comment', 'group' ]
+    fields = [ 'hostname', 'ipv4', 'ipv6', 'driver', 'comment', 'group', 'site' ]
     template_name =  "nodes/create.djhtml"
     success_url = reverse_lazy('nodes:index')
+
+class SiteView(LoginRequiredMixin, generic.ListView):
+    template_name = "sites/index.djhtml"
+    context_object_name = "all_sites"
+
+    def get_queryset(self):
+        return Site.objects.all()
+
+class SiteCreateView(LoginRequiredMixin, CreateView):
+    model = Site
+    fields = [ 'name', 'address', 'latitude', 'longitude', 'comment' ]
+    template_name = "sites/create.djhtml"
+    success_url = reverse_lazy('nodes:sites')
+
+class SiteDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Site
+    template_name = "sites/view.djhtml"
+
+def site_delete(request, pk):
+    site = get_object_or_404(Site, pk=pk)
+    site.delete()
+    return HttpResponseRedirect(reverse('nodes:sites'))

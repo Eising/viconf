@@ -10,5 +10,9 @@ urlpatterns = [
     path('node/new', views.NodeCreateView.as_view(), name='newnode'),
     path('groups/', views.GroupView.as_view(), name='groups'),
     path('groups/new', views.GroupCreateView.as_view(), name='newgroup'),
-    path('groups/<int:pk>/', views.GroupDetailView.as_view(), name='groupview')
+    path('groups/<int:pk>/', views.GroupDetailView.as_view(), name='groupview'),
+    path('sites/', views.SiteView.as_view(), name='sites'),
+    path('sites/new', views.SiteCreateView.as_view(), name='newsite'),
+    path('sites/<int:pk>/', views.SiteDetailView.as_view(), name='siteview'),
+    path('sites/<int:pk>/delete/', views.site_delete, name='sitedelete')
 ]

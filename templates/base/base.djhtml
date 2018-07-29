@@ -84,6 +84,7 @@
                         <ul>
                           <li><a href="{% url 'nodes:index' %}"> Nodes</a></li>
                           <li><a href="{% url 'nodes:groups' %}">Groups</a></li>
+                          <li><a href="{% url 'nodes:sites' %}">Sites</a></li>
                         </ul>
                     </li>
                     <li><a href="{% url 'configuration:provision' %}"><i class="glyphicon glyphicon-cog"></i> Provision Service</a></li>

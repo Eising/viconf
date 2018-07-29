@@ -1,0 +1,40 @@
+{% extends 'base/base.djhtml' %}
+{% block content %}
+    <div class="col-md-10">
+        <div class="row">
+            <div class="content-box-large">
+                <div class="panel-heading">
+                    <div class="panel-title" >Sites</div>
+                    <div class="panel-options"><a href="{% url 'nodes:newsite' %}"><i class="glyphicon glyphicon-plus"></i></a></div>
+                    <div class="panel-body">
+                        {% if all_sites %}
+
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Address</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for site in all_sites %}
+                                        <tr>
+                                            <td>{{ site.id }}</td>
+                                            <td>{{ site.name }}</td>
+                                            <td>{{ site.address }}</td>
+                                            <td><a href="{% url 'nodes:siteview' pk=node.id %}"><button type="button" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-eye-open"></i> View</button></a></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <p>No sites available</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
