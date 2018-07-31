@@ -24,7 +24,7 @@
                                             <td>{{ site.id }}</td>
                                             <td>{{ site.name }}</td>
                                             <td>{{ site.address }}</td>
-                                            <td><a href="{% url 'nodes:siteview' pk=node.id %}"><button type="button" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-eye-open"></i> View</button></a></td>
+                                            <td><a href="{% url 'nodes:siteview' pk=site.id %}"><button type="button" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-eye-open"></i> View</button></a> <a href="{% url 'nodes:siteedit' pk=site.id %}"><button type="button" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-pencil"></i> Edit</button></a> </td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>

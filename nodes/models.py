@@ -11,10 +11,10 @@ class Group(models.Model):
 
 class Site(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    address = models.TextField(blank=True)
-    latitude = models.FloatField(blank=True)
-    longitude = models.FloatField(blank=True)
-    comment = models.TextField(blank=True)
+    address = models.TextField(blank=True, null=True)
+    latitude = models.FloatField(blank=True, null=True)
+    longitude = models.FloatField(blank=True, null=True)
+    comment = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -35,7 +35,7 @@ class Node(models.Model):
     driver = models.CharField(max_length=255, choices=DRIVERS)
     comment = models.TextField(blank=True)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
-    site = models.ForeignKey(Site, on_delete=models.SET_NULL, null=True)
+    site = models.ForeignKey(Site, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.hostname

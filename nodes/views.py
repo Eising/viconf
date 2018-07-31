@@ -21,6 +21,13 @@ class DetailView(LoginRequiredMixin, generic.DetailView):
     model = Node
     template_name = "nodes/view.djhtml"
 
+class NodeUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = Node
+    fields = [ 'hostname', 'ipv4', 'ipv6', 'driver', 'comment', 'group', 'site' ]
+    template_name =  "nodes/create.djhtml"
+    success_url = reverse_lazy('nodes:index')
+
+
 def node_delete(request, node_id):
     node = get_object_or_404(Node, pk=node_id)
     node.delete()
@@ -73,6 +80,13 @@ class SiteCreateView(LoginRequiredMixin, CreateView):
 class SiteDetailView(LoginRequiredMixin, generic.DetailView):
     model = Site
     template_name = "sites/view.djhtml"
+
+class SiteUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = Site
+    fields = [ 'name', 'address', 'latitude', 'longitude', 'comment' ]
+    template_name = "sites/create.djhtml"
+    success_url = reverse_lazy('nodes:sites')
+
 
 def site_delete(request, pk):
     site = get_object_or_404(Site, pk=pk)

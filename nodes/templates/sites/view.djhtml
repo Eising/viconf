@@ -1,0 +1,35 @@
+{% extends 'base/base.djhtml' %}
+{% block content %}
+    <div class="col-md-10">
+        <div class="row">
+            <div class="content-box-large">
+                <div class="panel-heading">
+                    <div class="panel-title" >View Site</div>
+                    <div class="panel-body">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>{{ site.name }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Address</td>
+                                    <td>{{ site.address }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Position</td>
+                                    <td>{{ site.latitude }}/{{ site.longitude }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Comment</td>
+                                    <td> {{ site.comment }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <a data-href="{% url 'nodes:sitedelete' pk=site.id %}" data-toggle="modal" data-target="#confirm-delete"><button class="btn btn-danger" data-href="{% url 'nodes:sitedelete' pk=site.id %}" data-toggle="modal" data-target="#confirm-delete"><i class="glyphicon glyphicon-remove"></i> Delete</button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
