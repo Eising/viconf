@@ -6,6 +6,7 @@ app_name = 'nodes'
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     path('node/<int:pk>/', views.DetailView.as_view(), name='detail'),
+    path('node/<int:pk>/interfaces/', views.NodeInterfaceView.as_view(), name='nodeinterfaces'),
     path('node/<int:pk>/edit/', views.NodeUpdateView.as_view(), name='nodeedit'),
     path('node/<int:node_id>/delete/', views.node_delete, name="delete"),
     path('node/new', views.NodeCreateView.as_view(), name='newnode'),

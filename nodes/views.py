@@ -5,8 +5,9 @@ from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django import forms
 from django.contrib.auth.mixins import LoginRequiredMixin
+import sys
 
-from .models import Group, Node, Site
+from .models import Group, Node, Site, Interface
 
 # Create your views here.
 
@@ -92,3 +93,10 @@ def site_delete(request, pk):
     site = get_object_or_404(Site, pk=pk)
     site.delete()
     return HttpResponseRedirect(reverse('nodes:sites'))
+
+class NodeInterfaceView(LoginRequiredMixin, generic.ListView):
+    template_name = "nodes/interfaces.djhtml"
+    context_object_name = "interfaces"
+
+    def get_queryset(self):
+        return Interface.objects.filter(node_id=self.kwargs.get('pk')).all()

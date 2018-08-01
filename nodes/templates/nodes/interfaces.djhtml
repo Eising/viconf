@@ -1,0 +1,42 @@
+{% extends 'base/base.djhtml' %}
+{% block content %}
+    <div class="col-md-10">
+        <div class="row">
+            <div class="content-box-large">
+                <div class="panel-heading">
+                    <div class="panel-title" >Interfaces</div>
+                    <div class="panel-options"><a href="{% url 'nodes:newnode' %}"><i class="glyphicon glyphicon-plus"></i></a></div>
+                    <div class="panel-body">
+                        {% if interfaces %}
+
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Enabled</th>
+                                        <th>Mac Address</th>
+                                        <th>Speed</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for interface in interfaces %}
+                                        <tr>
+                                            <td>{{ interface.name }}</td>
+                                            <td>{{ interface.description }}</td>
+                                            <td>{{ interface.enabled }}</td>
+                                            <td>{{ interface.mac_address }}</td>
+                                            <td>{{ interface.speed }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <p>No interfaces available</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

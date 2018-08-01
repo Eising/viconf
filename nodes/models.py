@@ -39,3 +39,18 @@ class Node(models.Model):
 
     def __str__(self):
         return self.hostname
+
+class Interface(models.Model):
+    SOURCES = (
+        ('napalm', 'NAPALM'),
+        ('manual', 'MANUAL')
+    )
+
+    node = models.ForeignKey(Node, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    description = models.CharField(max_length=255, null=True)
+    enabled = models.BooleanField()
+    speed = models.IntegerField(null=True)
+    mac_address = models.CharField(max_length=255, null=True)
+    source = models.CharField(max_length=255, choices=SOURCES)
+    discovered = models.DateTimeField()
