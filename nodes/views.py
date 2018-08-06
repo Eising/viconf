@@ -22,6 +22,13 @@ class DetailView(LoginRequiredMixin, generic.DetailView):
     model = Node
     template_name = "nodes/view.djhtml"
 
+    def get_context_data(self, **kwargs):
+        context = super(DetailView, self).get_context_data(**kwargs)
+        pk = self.kwargs['pk']
+        context['interfaces'] = Interface.objects.filter(node_id=pk)
+        return context
+
+
 class NodeUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Node
     fields = [ 'hostname', 'ipv4', 'ipv6', 'driver', 'comment', 'group', 'site' ]

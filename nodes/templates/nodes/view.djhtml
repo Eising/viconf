@@ -28,6 +28,24 @@
                                     <td>Group Name</td>
                                     <td>{{ node.group.name }}</td>
                                 </tr>
+                                {% if interfaces %}
+                                    <tr>
+                                        <td>Interfaces</td>
+                                        <td>
+                                            <a href="#" id="ifexpand"><li class="glyphicon glyphicon-plus"></li> View</a>
+                                            <div id="iflist">
+
+                                              <ul class="list-group list-group-flush">
+                                              {% for interface in interfaces %}
+                                                  <li class="list-group-item">{{ interface.name }}</li>
+                                              {% endfor %}
+
+                                              </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+
                             </tbody>
                         </table>
                         <a data-href="{% url 'nodes:delete' node_id=node.id %}" data-toggle="modal" data-target="#confirm-delete"><button class="btn btn-danger" data-href="{% url 'nodes:delete' node_id=node.id %}" data-toggle="modal" data-target="#confirm-delete"><i class="glyphicon glyphicon-remove"></i> Delete</button></a>
@@ -36,4 +54,15 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block viewjs %}
+    <script type="text/javascript">
+     $(document).ready(function() {
+         $("#iflist").hide();
+         $("#ifexpand").click(function(event) {
+             $("#iflist").toggle();
+         });
+     });
+    </script>
 {% endblock %}
