@@ -35,9 +35,12 @@ def get_configurable_tags(template):
         'product',
         'reference',
         'node',
+        'node_interface',
         '_link_hostname',
         '_link_ipv4',
-        '_link_ipv6'
+        '_link_ipv6',
+        '_link_interface'
+
     ]
     # Here logic to handle inventory
 
@@ -53,13 +56,15 @@ class PystacheHelpers:
         'customer',
         'location',
         'product',
-        'reference'
+        'reference',
+        'node_interface'
     ]
 
     LINK_TAGS = [
         '_link_hostname',
         '_link_ipv4',
-        '_link_ipv6'
+        '_link_ipv6',
+        '_link_interface'
     ]
 
     def parse_template_tags(self, template):

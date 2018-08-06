@@ -31,10 +31,123 @@
 	                                  </div>
 	                                  <div class="form-group">
 		                                    <label>Template to Configure service</label>
+                                        <div class="editortoolbar" id="up_toolbar" data-texttarget="up_contents">
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown">
+                                                        Insert Variable<span class="caret"></span></button>
+                                                    <ul class="dropdown-menu" role="menu">
+                                                        <li><a href="#" class="inserttag">Variable</a></li>
+                                                        <li><a href="#" class="insertlist">List</a></li>
+                                                        <li class="dropdown-submenu">
+                                                            <a href="#" class="subentry">Basic Fields <span class="caret"></span></a>
+                                                            <ul class="dropdown-menu" role="menu">
+                                                                <li><a href="#" class="inserttag" data-tagname="reference">Reference</a></li>
+                                                                <li><a href="#" class="inserttag" data-tagname="customer">Customer</a></li>
+                                                                <li><a href="#" class="inserttag" data-tagname="location">Location</a></li>
+                                                                <li><a href="#" class="inserttag" data-tagname="node_interface">Interface</a></li>
+                                                            </ul>
+                                                        </li>
+                                                        <li class="dropdown-submenu">
+                                                            <a href="#" class="subentry">B-node <span class="caret"></span></a>
+                                                            <ul class="dropdown-menu" role="menu">
+                                                                <li><a href="#" class="inserttag" data-tagname="_link_hostname">Hostname</a></li>
+                                                                <li><a href="#" class="inserttag" data-tagname="_link_ipv4">IPv4 Address</a></li>
+                                                                <li><a href="#" class="inserttag" data-tagname="_link_ipv6">IPv6 Address</a></li>
+                                                                <li><a href="#" class="inserttag" data-tagname="_link_interface">Interface</a></li>
+                                                            </ul>
+                                                        </li>
+
+                                                        <li class="dropdown-submenu">
+                                                            <a class="subentry" href="#" tabindex="-1" href="#">Inventory <span class="caret"></span></a>
+                                                            <ul class="dropdown-menu" role="menu">
+                                                                {% for inventory in inventories %}
+                                                                    <li class="dropdown-submenu"><a href="#" class="subentry">{{ inventory.fields.name }} <span class="caret"></span> </a>
+                                                                    <ul data-inventory="{{ inventory.fields.name }}" class="dropdown-menu" id="inventoryholder">
+                                                                        <li>Field to insert in template</li>
+                                                                        {% for field, fieldtype in inventory.fields.fields.items %}
+                                                                            <li class="dropdown-submenu">
+                                                                                <a href="#" class="subentry">{{ field }} <span class="caret"></span> </a>
+                                                                                <ul class="dropdown-menu" data-field="{{ field }}" id="fieldholder">
+                                                                                    <li>Field to select in form</li>
+                                                                                    {% for field, fieldtype in inventory.fields.fields.items %}
+                                                                                        <li><a href="#" class="insertinventory" data-selector="{{ field }}">{{ field }}</a></li>
+                                                                                    {% endfor %}
+                                                                                </ul>
+                                                                            </li>
+                                                                        {% endfor %}
+                                                                        </li>
+                                                                    </ul>
+                                                                    </li>
+                                                                {% endfor %}
+                                                            </ul>
+                                                        </li>
+
+                                                    </ul>
+                                                </div>
+                                        </div>
+
                                         {% render_field form.up_contents class+="form-control" placeholder="Enter template here" rows="12"%}
 	                                  </div>
 	                                  <div class="form-group">
 		                                    <label>Template to remove service</label>
+                                        <div class="editortoolbar" id="down_toolbar" data-texttarget="down_contents">
+
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown">
+                                                        Insert Variable<span class="caret"></span></button>
+                                                    <ul class="dropdown-menu" role="menu">
+                                                        <li><a href="#" class="inserttag">Variable</a></li>
+                                                        <li><a href="#" class="insertlist">List</a></li>
+                                                        <li class="dropdown-submenu">
+                                                            <a href="#" class="subentry">Basic Fields <span class="caret"></span></a>
+                                                            <ul class="dropdown-menu" role="menu">
+                                                                <li><a href="#" class="inserttag" data-tagname="reference">Reference</a></li>
+                                                                <li><a href="#" class="inserttag" data-tagname="customer">Customer</a></li>
+                                                                <li><a href="#" class="inserttag" data-tagname="location">Location</a></li>
+                                                                <li><a href="#" class="inserttag" data-tagname="node_interface">Interface</a></li>
+                                                            </ul>
+                                                        </li>
+                                                        <li class="dropdown-submenu">
+                                                            <a href="#" class="subentry">B-node <span class="caret"></span></a>
+                                                            <ul class="dropdown-menu" role="menu">
+                                                                <li><a href="#" class="inserttag" data-tagname="_link_hostname">Hostname</a></li>
+                                                                <li><a href="#" class="inserttag" data-tagname="_link_ipv4">IPv4 Address</a></li>
+                                                                <li><a href="#" class="inserttag" data-tagname="_link_ipv6">IPv6 Address</a></li>
+                                                                <li><a href="#" class="inserttag" data-tagname="_link_interface">Interface</a></li>
+                                                            </ul>
+                                                        </li>
+
+                                                        <li class="dropdown-submenu">
+                                                            <a class="subentry" href="#" tabindex="-1" href="#">Inventory <span class="caret"></span></a>
+                                                            <ul class="dropdown-menu" role="menu">
+                                                                {% for inventory in inventories %}
+                                                                    <li class="dropdown-submenu"><a href="#" class="subentry">{{ inventory.fields.name }} <span class="caret"></span> </a>
+                                                                    <ul data-inventory="{{ inventory.fields.name }}" class="dropdown-menu" id="inventoryholder">
+                                                                        <li>Field to insert in template</li>
+                                                                        {% for field, fieldtype in inventory.fields.fields.items %}
+                                                                            <li class="dropdown-submenu">
+                                                                                <a href="#" class="subentry">{{ field }} <span class="caret"></span> </a>
+                                                                                <ul class="dropdown-menu" data-field="{{ field }}" id="fieldholder">
+                                                                                    <li>Field to select in form</li>
+                                                                                    {% for field, fieldtype in inventory.fields.fields.items %}
+                                                                                        <li><a href="#" class="insertinventory" data-selector="{{ field }}">{{ field }}</a></li>
+                                                                                    {% endfor %}
+                                                                                </ul>
+                                                                            </li>
+                                                                        {% endfor %}
+                                                                        </li>
+                                                                    </ul>
+                                                                    </li>
+                                                                {% endfor %}
+                                                            </ul>
+                                                        </li>
+
+                                                    </ul>
+                                                </div>
+
+
+                                        </div>
+
                                         {% render_field form.down_contents class+="form-control" placeholder="Enter template here" rows="12" %}
 	                                  </div>
 
@@ -65,5 +178,60 @@
             </div>
         </div>
     </div>
+
+{% endblock %}
+
+{% block viewjs %}
+    {% verbatim %}
+
+        <script type="text/javascript" >
+         $(document).ready(function() {
+             $(".inserttag").click(function() {
+                 var targetfield = $(this).parents(".editortoolbar").attr("data-texttarget");
+                 var txt = $("textarea[name=" + targetfield +"]");
+                 var caretPos = txt[0].selectionStart;
+                 var textAreaTxt = txt.val();
+                 if ($(this).attr("data-tagname")) {
+                     var variablename = $(this).attr("data-tagname");
+                 }
+                 else {
+                     var variablename = prompt('Variable name to insert');
+                 }
+                 var txtToAdd = "{{" + variablename + "}}";
+                 txt.val(textAreaTxt.substring(0, caretPos) + txtToAdd + textAreaTxt.substring(caretPos) );
+             });
+             $(".insertlist").click(function() {
+                 var targetfield = $(this).parents(".editortoolbar").attr("data-texttarget");
+                 var txt = $("textarea[name=" + targetfield +"]");
+                 var caretPos = txt[0].selectionStart;
+                 var textAreaTxt = txt.val();
+                 var variablename = prompt('Variable name to insert');
+                 var txtToAdd = "{{#" + variablename + "}}\n {{.}}\n{{/" + variablename + "}}";
+                 txt.val(textAreaTxt.substring(0, caretPos) + txtToAdd + textAreaTxt.substring(caretPos) );
+             });
+             $(".insertinventory").click(function() {
+                 var targetfield = $(this).parents(".editortoolbar").attr("data-texttarget");
+                 var txt = $("textarea[name=" + targetfield +"]");
+                 var caretPos = txt[0].selectionStart;
+                 var textAreaTxt = txt.val();
+                 var inventory = $(this).parents("#inventoryholder").attr("data-inventory");
+                 var field = $(this).parents("#fieldholder").attr("data-field");
+                 var selector = $(this).attr("data-selector");
+                 var txtToAdd = "{{_i_" + inventory + "__" + field +"__" + selector + "}}";
+                 txt.val(textAreaTxt.substring(0, caretPos) + txtToAdd + textAreaTxt.substring(caretPos) );
+             });
+
+
+
+
+             $('.dropdown-submenu a.subentry').on("click", function(e){
+                 $(this).next('ul').toggle();
+                 e.stopPropagation();
+                 e.preventDefault();
+             });
+         });
+        </script>
+        {% endverbatim %}
+
 
 {% endblock %}

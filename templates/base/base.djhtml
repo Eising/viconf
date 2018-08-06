@@ -2,23 +2,28 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Viconf</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- jQuery UI -->
-    <link href="https://code.jquery.com/ui/1.10.3/themes/redmond/jquery-ui.css" rel="stylesheet" media="screen">
+      <title>Viconf</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <!-- jQuery UI -->
+      <link href="https://code.jquery.com/ui/1.10.3/themes/redmond/jquery-ui.css" rel="stylesheet" media="screen">
 
-    <!-- Bootstrap -->
-    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
-    <!-- styles -->
-    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+      <!-- Bootstrap -->
+      <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+      <!-- styles -->
+      <link href="{% static 'css/styles.css' %}" rel="stylesheet">
 
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-    <link href="{% static 'vendors/form-helpers/css/bootstrap-formhelpers.min.css' %}" rel="stylesheet">
-    <link href="{% static 'vendors/select/bootstrap-select.min.css' %}" rel="stylesheet">
-    <link href="{% static 'vendors/tagsinput/css/bootstrap-tagsinput.css' %}" rel="stylesheet">
+      <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+      <link href="{% static 'vendors/form-helpers/css/bootstrap-formhelpers.min.css' %}" rel="stylesheet">
+      <link href="{% static 'vendors/select/bootstrap-select.min.css' %}" rel="stylesheet">
+      <link href="{% static 'vendors/tagsinput/css/bootstrap-tagsinput.css' %}" rel="stylesheet">
+
+      <!-- Dropdown hover -->
+      <link href="{% static 'vendors/dropdown-hover/css/bootstrap-dropdownhover.min.css' %}" rel="stylesheet">
+      <link href="{% static 'vendors/dropdown-hover/css/bootstrap-dropdownhover.min.css' %}" rel="stylesheet">
 
 
-    <link href="css/forms.css" rel="stylesheet">
+
+      <link href="css/forms.css" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -165,6 +170,8 @@
     <link href="{% static 'vendors/bootstrap-datetimepicker/datetimepicker.css' %}" rel="stylesheet">
     <script src="{% static 'vendors/bootstrap-datetimepicker/bootstrap-datetimepicker.js' %}"></script>
 
+    <!-- dropdown-hover -->
+    <script src="{% static 'vendors/dropdown-hover/js/bootstrap-dropdownhover.min.js' %}"></script>
 
     <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
 	  <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>

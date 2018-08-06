@@ -22,6 +22,7 @@ import pystache
 
 from .models import Template, Form, Service, FormForm, Config, Link
 from nodes.models import Node
+from inventory.models import Inventory
 
 # Templates view
 
@@ -55,6 +56,13 @@ class TemplateCreate(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         templ = self.object
         return reverse_lazy('configuration:templatetags', kwargs={'template_id': templ.id})
+
+    def get_context_data(self, **kwargs):
+        context = super(TemplateCreate, self).get_context_data(**kwargs)
+        context['inventories'] = Inventory.objects.exclude(deleted=True).filter(parent__isnull=True)
+
+        return context
+
 
 class TemplateUpdate(LoginRequiredMixin, UpdateView):
     model = Template
