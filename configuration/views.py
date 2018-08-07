@@ -1,11 +1,10 @@
 from django.shortcuts import render
 
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.views import generic, View
-from django.views.generic.base import TemplateView
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views import generic
+from django.views.generic.edit import CreateView, UpdateView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -16,7 +15,6 @@ from inventory.helpers.helpers import InventoryHelpers
 
 import re
 import sys
-import json
 import copy
 import pystache
 
@@ -26,6 +24,7 @@ from inventory.models import Inventory
 
 # Templates view
 
+
 class TemplateList(LoginRequiredMixin, generic.ListView):
     template_name = "templates/list.djhtml"
     context_object_name = "templates"
@@ -33,13 +32,17 @@ class TemplateList(LoginRequiredMixin, generic.ListView):
     def get_queryset(self):
         return Template.objects.exclude(deleted=True)
 
+
 @login_required
 def template_view(request, pk):
     template = get_object_or_404(Template, pk=pk)
-    up_contents =  abbr_on_template(template.up_contents, template.fields)
+    up_contents = abbr_on_template(template.up_contents, template.fields)
     down_contents = abbr_on_template(template.down_contents, template.fields)
-    return render(request, 'templates/view.djhtml', {'template': template, 'up_contents': up_contents, 'down_contents': down_contents })
-
+    return render(request, 'templates/view.djhtml', {
+        'template': template,
+        'up_contents': up_contents,
+        'down_contents': down_contents
+    })
 
 
 class TemplateCreate(LoginRequiredMixin, CreateView):
@@ -55,11 +58,13 @@ class TemplateCreate(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         templ = self.object
-        return reverse_lazy('configuration:templatetags', kwargs={'template_id': templ.id})
+        return reverse_lazy('configuration:templatetags',
+                            kwargs={'template_id': templ.id})
 
     def get_context_data(self, **kwargs):
         context = super(TemplateCreate, self).get_context_data(**kwargs)
-        context['inventories'] = Inventory.objects.exclude(deleted=True).filter(parent__isnull=True)
+        context['inventories'] = Inventory.objects.exclude(
+            deleted=True).filter(parent__isnull=True)
 
         return context
 
@@ -74,10 +79,11 @@ class TemplateUpdate(LoginRequiredMixin, UpdateView):
         "up_contents",
         "down_contents"
     ]
+
     def get_success_url(self):
         templ = self.object
-        return reverse_lazy('configuration:templatetags', kwargs={'template_id': templ.id})
-
+        return reverse_lazy('configuration:templatetags',
+                            kwargs={'template_id': templ.id})
 
 
 @login_required
@@ -106,7 +112,10 @@ def template_tags(request, template_id):
             tags.add(tag)
 
         validators = ViconfValidators.VALIDATORS
-        return render(request, 'templates/tags.djhtml', {'template': template, 'tags': tags, 'validators': validators})
+        return render(request, 'templates/tags.djhtml',
+                      {'template': template,
+                       'tags': tags,
+                       'validators': validators})
     elif request.method == 'POST':
         tags = dict()
         for key, value in request.POST.items():
@@ -119,7 +128,6 @@ def template_tags(request, template_id):
         return HttpResponseRedirect(reverse('configuration:templates'))
 
 
-
 # Form views
 
 @login_required
@@ -129,14 +137,16 @@ def form_list(request):
     if not form:
         return HttpResponseRedirect(reverse('configuration:formcompose'))
     else:
-        return render(request, "forms/list.djhtml", { 'forms': form })
+        return render(request, "forms/list.djhtml", {'forms': form})
+
 
 @login_required
 def form_view(request, pk):
     form = get_object_or_404(Form, pk=pk)
     defaults = form.defaults
 
-    return render(request, 'forms/view.djhtml', { 'form': form, 'defaults': defaults})
+    return render(request, 'forms/view.djhtml',
+                  {'form': form, 'defaults': defaults})
 
 
 @login_required
@@ -144,8 +154,9 @@ def form_create(request, pk=None):
     if request.method == 'GET':
         if pk is None:
             formform = FormForm()
-            formform.fields['templates'].queryset = Template.objects.exclude(deleted=True)
-            return render(request, "forms/compose.djhtml", {'form': formform })
+            formform.fields['templates'].queryset = Template.objects.exclude(
+                deleted=True)
+            return render(request, "forms/compose.djhtml", {'form': formform})
         else:
             form = get_object_or_404(Form, pk=pk)
             name = form.name
@@ -156,7 +167,9 @@ def form_create(request, pk=None):
 
 #            templates = ",".join(templates)
 
-            kwargs = {'name': name, 'description': description, 'templates': templates, 'form_id': form.id, 'request': request }
+            kwargs = {'name': name, 'description': description,
+                      'templates': templates, 'form_id': form.id,
+                      'request': request}
 
             return HttpResponse(actual_form_create(**kwargs))
 
@@ -165,7 +178,8 @@ def form_create(request, pk=None):
         description = request.POST['description']
         templates = request.POST.getlist('templates')
 
-        kwargs = {'name': name, 'description': description, 'templates': templates, 'request': request }
+        kwargs = {'name': name, 'description': description,
+                  'templates': templates, 'request': request}
         return HttpResponse(actual_form_create(**kwargs))
 
 
@@ -179,10 +193,10 @@ def actual_form_create(**kwargs):
     tags = set()
     for tid in templates:
 
-        up_ctags = pt.parse_template_tags(Template.objects.get(pk=tid).up_contents)['user_tags']
-        #up_ctags = get_configurable_tags(Template.objects.get(pk=tid).up_contents)
-        down_ctags = pt.parse_template_tags(Template.objects.get(pk=tid).down_contents)['user_tags']
-        #down_ctags = get_configurable_tags(Template.objects.get(pk=tid).down_contents)
+        up_ctags = pt.parse_template_tags(
+            Template.objects.get(pk=tid).up_contents)['user_tags']
+        down_ctags = pt.parse_template_tags(
+            Template.objects.get(pk=tid).down_contents)['user_tags']
         for uct in up_ctags:
             tags.add(uct)
         for dct in down_ctags:
@@ -192,25 +206,24 @@ def actual_form_create(**kwargs):
 
     defaults = dict()
 
-
     if 'form_id' in kwargs:
         form_id = kwargs['form_id']
         form = get_object_or_404(Form, pk=form_id)
         tdefaults = form.defaults
         for tag in tags:
             if tag in tdefaults:
-                defaults[tag] = { 'name': tdefaults[tag]['name'], 'value': tdefaults[tag]['value'] }
+                defaults[tag] = {'name': tdefaults[tag]
+                                 ['name'], 'value': tdefaults[tag]['value']}
             else:
-                defaults[tag] ={ 'name': '', 'value': '' }
-        return render(request, "forms/config.djhtml", {'name': name, 'description': description, 'tags': tags, 'templates': templates, 'form': form, 'defaults': defaults })
+                defaults[tag] = {'name': '', 'value': ''}
+        return render(request, "forms/config.djhtml", {'name': name, 'description': description,
+                                                       'tags': tags, 'templates': templates, 'form': form,
+                                                       'defaults': defaults})
     else:
         for tag in tags:
-            defaults[tag] ={ 'name': '', 'value': '' }
+            defaults[tag] = {'name': '', 'value': ''}
 
-        return render(request, "forms/config.djhtml", {'name': name, 'description': description, 'tags': tags, 'templates': templates, 'defaults': defaults })
-
-
-
+        return render(request, "forms/config.djhtml", {'name': name, 'description': description, 'tags': tags, 'templates': templates, 'defaults': defaults})
 
 
 @login_required
@@ -222,7 +235,7 @@ def form_config(request):
             if param is not None:
                 keytype = param.group(1)
                 field = param.group(2)
-                if not field in defaults:
+                if field not in defaults:
                     defaults[field] = dict()
                 if keytype == 'default':
                     defaults[field]["value"] = value
@@ -243,16 +256,15 @@ def form_config(request):
             form.defaults = defaults
             form.require_update = False
         else:
-            form = Form(name=params['name'], description=params['description'], defaults=defaults)
+            form = Form(
+                name=params['name'], description=params['description'],
+                defaults=defaults)
         form.save()
         for template in templates:
             form.templates.add(template)
         form.save()
 
-
-
         return HttpResponseRedirect(reverse('configuration:forms'))
-
 
 
 @login_required
@@ -270,10 +282,12 @@ def form_delete(request, pk):
 def service_provision(request):
     form = Form.objects.exclude(deleted=True).exclude(require_update=True)
     if request.method == 'GET':
-        products = Service.objects.exclude(deleted=True, product__isnull=True).distinct('product')
+        products = Service.objects.exclude(
+            deleted=True, product__isnull=True).distinct('product')
         nodes = Node.objects.all()
-        dynurl = reverse('configuration:servicedynamic', kwargs={'pk': 0}).rstrip("/0")
-        return render(request, "services/provision.djhtml", {'forms': form, 'nodes': nodes, 'products': products, 'dynurl': dynurl })
+        dynurl = reverse('configuration:servicedynamic',
+                         kwargs={'pk': 0}).rstrip("/0")
+        return render(request, "services/provision.djhtml", {'forms': form, 'nodes': nodes, 'products': products, 'dynurl': dynurl})
     elif request.method == 'POST':
         # Process the submitted
         link_node_id = request.POST.get('link_node_id', None)
@@ -317,7 +331,9 @@ def service_provision(request):
         params['node'] = node
         params['form'] = form
 
-        service = Service(reference=params['reference'], customer=params['customer'], location=params['location'], product=params['product'], template_fields=params['template_fields'], node=params['node'], form=params['form'])
+        service = Service(reference=params['reference'], customer=params['customer'], location=params['location'],
+                          product=params['product'], template_fields=params['template_fields'],
+                          node=params['node'], form=params['form'])
         service.save()
 
         if link_node_id:
@@ -329,8 +345,7 @@ def service_provision(request):
             link.save()
             link.node.add(node)
 
-        return HttpResponseRedirect(reverse('configuration:renderservice', kwargs={'service_id': service.id }))
-
+        return HttpResponseRedirect(reverse('configuration:renderservice', kwargs={'service_id': service.id}))
 
 
 @login_required
@@ -381,11 +396,13 @@ def service_dynamic(request, pk):
     for tag in inventory_tags:
         parsed_tag = tag.split("__")
         if len(parsed_tag) == 3:
-            form_inventory[parsed_tag[0]] = InventoryHelpers.fetch_inventory_tuple_with_ids(parsed_tag)
+            form_inventory[parsed_tag[0]] = InventoryHelpers.fetch_inventory_tuple_with_ids(
+                parsed_tag)
 
+    return render(request, "services/dynamic.djhtml", {'defaults': defaults, 'link_tags': link_tags,
+                                                       'nodes': nodes, 'inventories': form_inventory,
+                                                       'all_lists': all_lists})
 
-
-    return render(request, "services/dynamic.djhtml", { 'defaults': defaults, 'link_tags': link_tags, 'nodes': nodes, 'inventories': form_inventory, 'all_lists': all_lists})
 
 def validate_reference(request):
     reference = request.GET.get('reference', None)
@@ -402,6 +419,7 @@ class ServiceIndex(LoginRequiredMixin, generic.ListView):
     def get_queryset(self):
         return Service.objects.exclude(deleted=True)
 
+
 @login_required
 def service_config(request, pk):
     service = get_object_or_404(Service, pk=pk)
@@ -410,6 +428,7 @@ def service_config(request, pk):
     return HttpResponseRedirect(reverse('configuration:configview', kwargs={'pk': config.id}))
 
 # Config
+
 
 @login_required
 def render_service(request, service_id):
@@ -432,23 +451,19 @@ def render_service(request, service_id):
             keyname = "{}__{}".format(keyprefix, column)
             invdata[keyname] = value
 
-
-
     # Collect inventory tags
     for template in service.form.templates.all():
         for tag in pt.parse_template_tags(template.up_contents)['inventory_tags']:
             invtags.add("_i_" + tag)
 
     for tag in invtags:
-        lookup = tag.rsplit("__", 1)[0] # Remove the selector
+        lookup = tag.rsplit("__", 1)[0]  # Remove the selector
         if lookup in invdata:
             params[tag] = invdata[lookup]
-
 
     for template in service.form.templates.all():
         up_template.append(pystache.render(template.up_contents, params))
         down_template.append(pystache.render(template.down_contents, params))
-
 
     up_template = "\n".join(up_template)
     down_template = "\n".join(down_template)
@@ -460,7 +475,8 @@ def render_service(request, service_id):
         config.up_config = up_template
         config.down_config = down_template
     else:
-        config = Config(up_config=up_template, down_config=down_template, service=service)
+        config = Config(up_config=up_template,
+                        down_config=down_template, service=service)
 
     config.save()
     return HttpResponseRedirect(reverse('configuration:configview', kwargs={'pk': config.id}))
@@ -479,7 +495,7 @@ def service_delete(request, pk):
 def config_view(request, pk):
     config = get_object_or_404(Config, pk=pk)
 
-    return render(request, "config/view.djhtml", { 'config': config })
+    return render(request, "config/view.djhtml", {'config': config})
 
 
 # validators
@@ -487,6 +503,6 @@ def config_view(request, pk):
 def validatorjs(request):
     validators = ViconfValidators.VALIDATORS
 
-    return render(request, "js/validators.js", { 'validators': validators })
+    return render(request, "js/validators.js", {'validators': validators})
 
 # Generic classes for working urls...

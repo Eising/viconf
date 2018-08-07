@@ -19,18 +19,23 @@ from django.views.generic.base import TemplateView
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    path('license', TemplateView.as_view(template_name='base/license.djhtml'), name='license'),
+    path('license', TemplateView.as_view(
+        template_name='base/license.djhtml'), name='license'),
     path('nodes/', include('nodes.urls')),
-#    path('api/v1/', include('api.urls')),
+    #    path('api/v1/', include('api.urls')),
     path('admin/', admin.site.urls),
     path('inventory/', include('inventory.urls')),
     path('api/inventory/', include('inventory.api_urls')),
     path('', include('configuration.urls')),
     path('search/', include('search.urls')),
     path('provisioning/', include('provisioning.urls')),
-    path('login/', auth_views.LoginView.as_view(template_name='auth/login.djhtml'), name='login'),
+    path('login/', auth_views.LoginView.as_view(template_name='auth/login.djhtml'),
+         name='login'),
     path('logout/', auth_views.logout, {'next_page': 'login'}, name='logout'),
-    path('password/', auth_views.PasswordChangeView.as_view(template_name='auth/password.djhtml'), name='changepassword'),
-    path('password/done', auth_views.PasswordChangeDoneView.as_view(template_name='auth/password_changed.djhtml'), name='password_change_done')
+    path('password/', auth_views.PasswordChangeView.as_view(
+        template_name='auth/password.djhtml'), name='changepassword'),
+    path('password/done', auth_views.PasswordChangeDoneView.as_view(
+        template_name='auth/password_changed.djhtml'),
+        name='password_change_done')
 
 ]

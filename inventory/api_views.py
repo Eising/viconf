@@ -1,37 +1,17 @@
-from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import generics
-from rest_framework.views import APIView
-from rest_framework.renderers import JSONRenderer
-from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
 from django.http import Http404
-from django.shortcuts import get_object_or_404, render
-import sys
-import types
-from rest_framework import serializers
+from django.shortcuts import get_object_or_404
 
 from .models import Inventory
 
 from .serializers import InventorySerializer
 
-"""
-def api_view_inventories(request):
-    # view all inventories
-
-    inventories = Inventory.objects.exclude(deleted=True).filter(parent__isnull=True)
-
-    data = { "inventories": list() }
-    for inventory in inventories:
-        data["inventories"].append(inventory.fields["name"])
-
-    return JsonResponse(data)
-
-"""
 
 def api_view_inventories(request):
-    inventories = Inventory.objects.exclude(deleted=True).filter(parent__isnull=True)
+    inventories = Inventory.objects.exclude(
+        deleted=True).filter(parent__isnull=True)
     serializer = InventorySerializer(inventories, many=True)
 
     return JsonResponse(serializer.data, safe=False)
@@ -55,7 +35,6 @@ def api_get_inventory_by_name(request, name):
             return api_add_row(parent, data)
 
 
-
 @csrf_exempt
 def api_get_inventory_by_id(request, pk):
     if request.method == 'GET':
@@ -73,13 +52,13 @@ def api_show_inventory(inventory):
 
     return JsonResponse(serializer.data, safe=False)
 
+
 def api_add_row(parent, data):
     serializer = InventorySerializer(data=data)
     if serializer.is_valid():
         serializer.save(parent=parent)
         return JsonResponse(serializer.data, status=201)
     return JsonResponse(serializer.errors, status=400)
-
 
 
 def api_show_row(row_id):
@@ -102,6 +81,7 @@ def api_get_inventory_row_by_name(request, name, rowid):
             raise Http404("Parent mismatch")
         else:
             return api_show_row(rowid)
+
 
 def api_get_inventory_row_by_id(request, pk, rowid):
     inventory = get_object_or_404(Inventory, pk=pk)

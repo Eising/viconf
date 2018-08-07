@@ -11,6 +11,8 @@ from .tasks import push_to_device_task
 # Create your views here.
 
 # Helper function
+
+
 def configure_service(pk, direction):
     service = get_object_or_404(Service, pk=pk)
     if direction == 'up':
@@ -27,17 +29,20 @@ def configure_service(pk, direction):
     configtask.save()
 
     # Start task
-    task =  push_to_device_task.delay(pk=configtask.id, commit=False)
+    task = push_to_device_task.delay(pk=configtask.id, commit=False)
 
     return HttpResponseRedirect(reverse('provisioning:view', kwargs={'pk': configtask.id}))
+
 
 @login_required
 def provision_up(request, pk):
     return configure_service(pk=pk, direction='up')
 
+
 @login_required
 def provision_down(request, pk):
     return configure_service(pk=pk, direction='down')
+
 
 @login_required
 def view_task(request, pk):
@@ -46,7 +51,8 @@ def view_task(request, pk):
 
     return render(request, "provisioning/view.djhtml", {'configtask': configtask})
 
-    #return JsonResponse(data)
+    # return JsonResponse(data)
+
 
 @login_required
 def commit_task(request, pk):
@@ -55,6 +61,5 @@ def commit_task(request, pk):
     configtask.state = 'STARTING'
     configtask.save()
     task = push_to_device_task.delay(pk=configtask.id, commit=True)
-
 
     return HttpResponseRedirect(reverse('provisioning:view', kwargs={'pk': configtask.id}))

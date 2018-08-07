@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-import os, sys
+import os
+import sys
 from napalm.base import get_network_driver
 import socket
 from datetime import datetime

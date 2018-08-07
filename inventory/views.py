@@ -1,30 +1,28 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import get_object_or_404, render
-from django.urls import reverse, reverse_lazy
-from django.views import generic, View
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from util.validators import ViconfValidators
 
 from django.contrib.auth.decorators import login_required
 
 import django_excel as excel
 
-
 from inventory.helpers.helpers import InventoryHelpers
 
 from .models import Inventory
 
 import re
-import sys
-import pprint
 
 # Create your views here.
+
 
 @login_required
 def view_inventories(request):
 
-    inventories = Inventory.objects.exclude(deleted=True).filter(parent__isnull=True)
-    return render(request, 'index.djhtml', {'inventories': inventories })
+    inventories = Inventory.objects.exclude(
+        deleted=True).filter(parent__isnull=True)
+    return render(request, 'index.djhtml', {'inventories': inventories})
 
 
 @login_required
@@ -34,18 +32,16 @@ def add_inventory(request):
         validators = ViconfValidators.VALIDATORS
         return render(request, 'create.djhtml', {'validators': validators})
 
-
     elif request.method == 'POST':
         # Something
         fields = dict()
         for key, value in request.POST.items():
-           param = re.match(r'^field\.(.*)$', key)
-           if param is not None:
-               fields[param.group(1)] = value
-
+            param = re.match(r'^field\.(.*)$', key)
+            if param is not None:
+                fields[param.group(1)] = value
 
         kwargs = {'name': request.POST.get('name', None), 'fields': fields}
-        inventory = InventoryHelpers.add_inventory(**kwargs)
+        InventoryHelpers.add_inventory(**kwargs)
 
         return HttpResponseRedirect(reverse('inventory:index'))
 
@@ -60,15 +56,15 @@ def delete_inventory(request, pk):
 
     return HttpResponseRedirect(reverse('inventory:index'))
 
+
 @login_required
 def delete_inventory_row(request, pk, row_id):
     inventory = get_object_or_404(Inventory, pk=row_id)
-    parent = get_object_or_404(Inventory, pk=pk)
+    get_object_or_404(Inventory, pk=pk)  # rewrite this
     inventory.delete()
 
-    return HttpResponseRedirect(reverse('inventory:viewinventory', kwargs={ 'pk': pk }))
-
-
+    return HttpResponseRedirect(reverse('inventory:viewinventory',
+                                        kwargs={'pk': pk}))
 
 
 @login_required
@@ -77,8 +73,9 @@ def view_inventory(request, pk):
     columns = inventory.fields['fields']
     if request.method == 'GET':
         children = Inventory.objects.filter(parent=inventory)
-        return render(request, 'view.djhtml', {'inventory': inventory, 'columns': columns, 'children': children})
-
+        return render(request, 'view.djhtml', {'inventory': inventory,
+                                               'columns': columns,
+                                               'children': children})
 
 
 @login_required
@@ -92,9 +89,10 @@ def add_row(request, pk):
             if param is not None:
                 entries[param.group(1)] = value
 
-        row = InventoryHelpers.add_inventory_row(inventory, entries)
+        InventoryHelpers.add_inventory_row(inventory, entries)
 
-        return HttpResponseRedirect(reverse('inventory:viewinventory', kwargs={'pk': pk}))
+        return HttpResponseRedirect(reverse('inventory:viewinventory',
+                                            kwargs={'pk': pk}))
 
 
 @login_required
@@ -119,7 +117,10 @@ def generate_template(request, pk, export=False):
 
     fields = [inventory.fields['fields'].keys()]
 
-    return excel.make_response_from_array(fields, 'xlsx', file_name="{}.xlsx".format(inventory.fields['name']))
+    return excel.make_response_from_array(fields, 'xlsx',
+                                          file_name="{}.xlsx".format(
+                                              inventory.fields['name']))
+
 
 @login_required
 def upload_template(request, pk):
@@ -131,6 +132,8 @@ def upload_template(request, pk):
 
         data = request.FILES['file'].get_records()
         for row in data:
-            InventoryHelpers.add_inventory_row(parent=inventory, entries=dict(row))
+            InventoryHelpers.add_inventory_row(
+                parent=inventory, entries=dict(row))
 
-        return HttpResponseRedirect(reverse('inventory:viewinventory', kwargs={'pk': pk}))
+        return HttpResponseRedirect(reverse('inventory:viewinventory',
+                                            kwargs={'pk': pk}))

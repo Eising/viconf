@@ -3,6 +3,7 @@ from django.contrib.postgres.fields import JSONField
 from nodes.models import Node
 from django.forms import ModelForm
 
+
 # Create your models here.
 class Template(models.Model):
     name = models.CharField(max_length=255)
@@ -18,6 +19,7 @@ class Template(models.Model):
     def __str__(self):
         return self.name
 
+
 class Form(models.Model):
     name = models.CharField(max_length=255)
     defaults = JSONField()
@@ -27,6 +29,7 @@ class Form(models.Model):
     created = models.DateTimeField(auto_now=True)
     modified = models.DateTimeField(auto_now=True)
     templates = models.ManyToManyField(Template)
+
 
 class Service(models.Model):
     reference = models.CharField(max_length=255)
@@ -40,6 +43,7 @@ class Service(models.Model):
     deleted = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now=True)
     modified = models.DateTimeField(auto_now=True)
+
 
 class Config(models.Model):
     service = models.ForeignKey(Service, null=True, on_delete=models.SET_NULL)
@@ -63,6 +67,7 @@ class TemplateForm(ModelForm):
             "up_contents",
             "down_contents"
         ]
+
 
 class FormForm(ModelForm):
     class Meta:

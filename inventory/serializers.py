@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from inventory.helpers.helpers import InventoryHelpers
-import sys
+
 
 class InventorySerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
@@ -8,7 +8,7 @@ class InventorySerializer(serializers.Serializer):
     fields = serializers.JSONField()
 
     def create(self, validated_data):
-#        print(validated_data, file=sys.stderr)
+        #        print(validated_data, file=sys.stderr)
         parent = validated_data['parent']
         data = validated_data['fields']
         return InventoryHelpers.add_inventory_row(parent, data)

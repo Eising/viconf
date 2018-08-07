@@ -44,9 +44,7 @@ def push_to_device_task(pk, commit=False):
                 configtask.save()
 
         except MergeConfigException:
-           configtask.state = 'FAIL'
-           configtask.save()
-
-
+            configtask.state = 'FAIL'
+            configtask.save()
 
     return True

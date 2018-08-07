@@ -1,16 +1,16 @@
 import pystache
-import copy
 import re
-import sys
+
+
 def pystache_template_parsekeys(template):
     # fragile, relies on pystache internals
     parsed_template = pystache.parse(template)
     keys = []
     parse_tree = parsed_template._parse_tree
-    keyed_classes = ( pystache.parser._EscapeNode,
-                      pystache.parser._LiteralNode,
-                      pystache.parser._InvertedNode,
-                      pystache.parser._SectionNode )
+    keyed_classes = (pystache.parser._EscapeNode,
+                     pystache.parser._LiteralNode,
+                     pystache.parser._InvertedNode,
+                     pystache.parser._SectionNode)
     for token in parse_tree:
         if isinstance(token, keyed_classes):
             keys.append(token.key)
@@ -18,12 +18,12 @@ def pystache_template_parsekeys(template):
     # (json does not like sets)
     return list(set(keys))
 
+
 def pystache_list_tags(template):
     # This is a bit of a dirty monkey patch, and should probably be rewritten
     # in to a full parser.
     tags = re.compile(r'\{\{\s*#([^}]+\s*)\}\}')
     return tags.findall(template)
-
 
 
 def get_configurable_tags(template):
@@ -51,8 +51,9 @@ def get_configurable_tags(template):
 
     return tags
 
+
 class PystacheHelpers:
-    FORM_TAGS =  [
+    FORM_TAGS = [
         'customer',
         'location',
         'product',
@@ -93,7 +94,6 @@ class PystacheHelpers:
             if match is not None:
                 result['user_tags'].remove(tag)
                 result['inventory_tags'].add(match.group(1))
-
 
         result['all_tags'] = tags
 

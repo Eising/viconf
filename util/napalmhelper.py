@@ -1,7 +1,7 @@
 from napalm.base import get_network_driver
-import sys
 
 from celery import shared_task
+
 
 class NapalmHelper:
 
@@ -23,7 +23,7 @@ class NapalmHelper:
             return diff
 
 
-
 if __name__ == '__main__':
     config = "hostname foo"
-    print(NapalmHelper.configure_device(target="172.17.0.2", config=config, commit=True))
+    print(NapalmHelper.configure_device(
+        target="172.17.0.2", config=config, commit=True))

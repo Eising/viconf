@@ -2,6 +2,7 @@ from django.db import models
 from configuration.models import Service
 # Create your models here.
 
+
 class ConfigTask(models.Model):
     STATES = (
         ('STARTING', 'Starting up'),

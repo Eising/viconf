@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Group(models.Model):
     name = models.CharField(max_length=255)
     username = models.CharField(max_length=255)
@@ -8,6 +9,7 @@ class Group(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Site(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -18,6 +20,7 @@ class Site(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Node(models.Model):
     DRIVERS = (
@@ -35,10 +38,12 @@ class Node(models.Model):
     driver = models.CharField(max_length=255, choices=DRIVERS)
     comment = models.TextField(blank=True)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
-    site = models.ForeignKey(Site, on_delete=models.SET_NULL, null=True, blank=True)
+    site = models.ForeignKey(
+        Site, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.hostname
+
 
 class Interface(models.Model):
     SOURCES = (
