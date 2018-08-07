@@ -32,7 +32,6 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'nodes.apps.NodesConfig',
-    'api.apps.ApiConfig',
     'configuration.apps.ConfigurationConfig',
     'inventory.apps.InventoryConfig',
     'search.apps.SearchConfig',
@@ -155,5 +154,6 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "viconf/static")
 ]
 
-CELERY_BROKER_URL = "redis://:{}@redis:6379/".format(os.environ['REDIS_PASSWORD'])
+CELERY_BROKER_URL = "redis://:{}@redis:6379/".format(
+    os.environ['REDIS_PASSWORD'])
 CELERY_CELERY_RESULT_BACKEND = 'django-db'
