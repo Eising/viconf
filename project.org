@@ -1,0 +1,59 @@
+#+TITLE: Viconf project
+
+* Introduction
+This file is the agenda and project file for the Viconf project. It includes milestones, todos and all that.
+
+* Milestones
+
+** TODO Version 0.5
+   Version 0.5 will be the initial test release
+
+*** General Improvements
+    The following general improvements need to be in order
+
+**** TODO Deployment ready docker-compose file
+     The docker compose file needs to include all the necessary dependencies,
+     such as celery worker and beat.
+
+**** TODO Backup/restore
+     Backup and restore needs to be tested thoroughly.
+
+*** Code improvements
+
+**** DONE PEP8 linting
+     CLOSED: [2018-08-07 Tue 13:04]
+     Make sure the code conforms to PEP8.
+
+**** TODO API documentation
+     The API needs proper documentation.
+
+*** App improvements
+
+**** TODO Cleanup of unused code
+     All unused modules/apps need to be cleaned up.
+
+**** TODO Template exception handling
+     Make sure that mistyped templates are handled properly.
+
+**** TODO Inventory enhancements
+     Make sure that the inventory module actually handles the types configured,
+     and that editing is smooth and working.
+
+**** TODO Audit logging?
+     An audit trail would be nice. Maybe for v1.0 instead.
+
+*** Provisioning improvements
+
+**** TODO Properly log all NAPALM transactions
+     All interactions with actual live equipment needs to be logged properly for
+     forensic and debugging purpose.
+
+**** TODO Make sure that drivers are handled correctly.
+     This might be complicated and hard to test, but at least IOS, IOSXR and
+     JUNOS need to be tested.
+
+**** TODO Make sure that devices with no driver are handled correctly.
+     These are devices that aren't handled at all.
+
+
+** TODO Version 1.0
