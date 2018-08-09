@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'provisioning.apps.ProvisioningConfig',
     'rest_framework',
     'widget_tweaks',
+    'easyaudit',
     'django_celery_results',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'easyaudit.middleware.easyaudit.EasyAuditMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
