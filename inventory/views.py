@@ -22,7 +22,8 @@ def view_inventories(request):
 
     inventories = Inventory.objects.exclude(
         deleted=True).filter(parent__isnull=True)
-    return render(request, 'inventory/index.djhtml', {'inventories': inventories})
+    return render(request, 'inventory/index.djhtml',
+                  {'inventories': inventories})
 
 
 @login_required
@@ -30,7 +31,8 @@ def add_inventory(request):
 
     if request.method == 'GET':
         validators = ViconfValidators.VALIDATORS
-        return render(request, 'inventory/create.djhtml', {'validators': validators})
+        return render(request, 'inventory/create.djhtml',
+                      {'validators': validators})
 
     elif request.method == 'POST':
         # Something
@@ -73,9 +75,10 @@ def view_inventory(request, pk):
     columns = inventory.fields['fields']
     if request.method == 'GET':
         children = Inventory.objects.filter(parent=inventory)
-        return render(request, 'inventory/view.djhtml', {'inventory': inventory,
-                                                         'columns': columns,
-                                                         'children': children})
+        return render(request, 'inventory/view.djhtml',
+                      {'inventory': inventory,
+                       'columns': columns,
+                       'children': children})
 
 
 @login_required
