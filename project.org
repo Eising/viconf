@@ -39,7 +39,8 @@ This file is the agenda and project file for the Viconf project. It includes mil
      Make sure that the inventory module actually handles the types configured,
      and that editing is smooth and working.
 
-**** TODO Audit logging?
+**** DONE Audit logging
+     CLOSED: [2018-08-09 Thu 11:03]
      An audit trail would be nice. Maybe for v1.0 instead.
 
 
