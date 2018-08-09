@@ -4,6 +4,8 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from util.validators import ViconfValidators
 
+from collections import OrderedDict
+
 from django.contrib.auth.decorators import login_required
 
 import django_excel as excel
@@ -11,6 +13,9 @@ import django_excel as excel
 from inventory.helpers.helpers import InventoryHelpers
 
 from .models import Inventory
+
+from django import forms
+from util.validators import ViconfFormValidator
 
 import re
 
@@ -69,14 +74,27 @@ def delete_inventory_row(request, pk, row_id):
                                         kwargs={'pk': pk}))
 
 
+def generate_form(dictionary):
+    form_fields = OrderedDict()
+    for key, validator in dictionary.items():
+        form_fields[key] = forms.CharField(
+            validators=[ViconfFormValidator(validator)])
+
+    return type(str('DictionaryGeneratedForm'), (forms.Form,), form_fields)
+
+
 @login_required
 def view_inventory(request, pk):
     inventory = get_object_or_404(Inventory, pk=pk)
     columns = inventory.fields['fields']
+
+    InvForm = generate_form(columns)
+    form = InvForm()
     if request.method == 'GET':
         children = Inventory.objects.filter(parent=inventory)
         return render(request, 'inventory/view.djhtml',
                       {'inventory': inventory,
+                       'form': form,
                        'columns': columns,
                        'children': children})
 
@@ -86,16 +104,21 @@ def add_row(request, pk):
     if request.method == 'POST':
         inventory = get_object_or_404(Inventory, pk=pk)
         # Add row
-        entries = dict()
-        for key, value in request.POST.items():
-            param = re.match(r'^key\.(.*)$', key)
-            if param is not None:
-                entries[param.group(1)] = value
+        fieldset = inventory.fields['fields']
+        InvForm = generate_form(fieldset)
+        form = InvForm(request.POST)
+        if form.is_valid():
+            InventoryHelpers.add_inventory_row(inventory, form.cleaned_data)
 
-        InventoryHelpers.add_inventory_row(inventory, entries)
-
-        return HttpResponseRedirect(reverse('inventory:viewinventory',
-                                            kwargs={'pk': pk}))
+            return HttpResponseRedirect(reverse('inventory:viewinventory',
+                                                kwargs={'pk': pk}))
+        else:
+            children = Inventory.objects.filter(parent=inventory)
+            return render(request, 'inventory/view.djhtml',
+                          {'inventory': inventory,
+                           'form': form,
+                           'columns': fieldset,
+                           'children': children})
 
 
 @login_required

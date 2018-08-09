@@ -1,4 +1,5 @@
 {% extends 'base/base.djhtml' %}
+{% load widget_tweaks %}
 {% block content %}
     {% load indirect %}
 <div class="col-md-10" id="maincontents">
@@ -34,12 +35,38 @@
                     </tbody>
                       <tfoot>
                       <tr>
-                          {% for key, validator in columns.items %}
-                                <td><input class="form-control {% validatorclass validator %}" type="text" name="key.{{ key }}" placeholder="{{ key }}"></td>
+
+                          {% for field in form %}
+                              <td>
+                                  {% if field.errors %}
+                                      <div class="has-error">
+                                      {% render_field field class="form-control required" placeholder=field.label %}
+                                      </div>
+                                  {% else %}
+                                      {% render_field field class="form-control required" placeholder=field.label %}
+                                  {% endif %}
+
+                              </td>
+
                           {% endfor %}
+
 
                             <td><button type="submit" class="btn btn-success">Add</button></td>
                       </tr>
+                      {% if form.errors %}
+                          <tr>
+                              {% for field in form %}
+                                  <td>
+                                      {% if field.errors %}
+                                          <div class="has-error">
+                                              <span class="help-block">{{ field.errors }}</span>
+                                          </div>
+                                      {% endif %}
+                                  </td>
+                              {% endfor %}
+                          </tr>
+                      {% endif %}
+
 
                       </tfoot>
               </table>

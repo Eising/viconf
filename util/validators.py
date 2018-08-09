@@ -1,4 +1,5 @@
 import re
+from django.core.exceptions import ValidationError
 
 
 class ViconfValidators:
@@ -13,6 +14,7 @@ class ViconfValidators:
             'error': 'Invalid string'
         },
         'asn': {'css_class': 'validateasn',
+                'error': 'Invalid ASN',
                 'description': 'Validates AS-numbers',
                 'end': 4294967296,
                 'start': 1,
@@ -22,6 +24,7 @@ class ViconfValidators:
                    'range',
                    'end': 65535,
                    'start': 1,
+                   'error': 'Bundle must be a number between 1 and 65535',
                    'type': 'range'},
         'cidrv4': {'css_class': 'validatecidrv4',
                    'description': 'Validates IPv4 CIDR '
@@ -38,6 +41,7 @@ class ViconfValidators:
         'ioxif': {'css_class': 'validatesxriface',
                   'description': 'Validates IOS-XR Interface',
                   'regex': '^(GigabitEthernet|TenGigE|HundredGigE)([0-9+]\/)+([0-9])$',
+                  'error': 'Invalid Interface name',
                   'type': 'regex'},
         'ipv4': {'css_class': 'validateipv4',
                  'description': 'Validates IPv4 addresses',
@@ -56,6 +60,7 @@ class ViconfValidators:
                    'type': 'regex'},
 
         'vlan': {'css_class': 'validatevlan',
+                 'error': 'VLAN must be a number between 1 and 4094',
                  'description': 'Validates Vlan',
                  'end': 4094,
                  'start': 1,
@@ -73,7 +78,11 @@ class ViconfValidators:
             else:
                 return False
         elif validator['type'] == 'range':
-            number = int(tester)
+            try:
+                number = int(tester)
+            except ValueError:
+                return False
+
             ran = range(validator['start'], validator['end'])
             if number in ran:
                 return True
@@ -81,3 +90,14 @@ class ViconfValidators:
                 return False
         else:
             return True
+
+
+class ViconfFormValidator:
+    def __init__(self, validator):
+        self.validator = validator
+
+    def __call__(self, tester):
+        vival = ViconfValidators()
+        if not vival.validate(self.validator, tester):
+            error = vival.VALIDATORS[self.validator]['error']
+            raise ValidationError(error)
