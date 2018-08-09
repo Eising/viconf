@@ -64,12 +64,12 @@
                                                                     <li class="dropdown-submenu"><a href="#" class="subentry">{{ inventory.fields.name }} <span class="caret"></span> </a>
                                                                     <ul data-inventory="{{ inventory.fields.name }}" class="dropdown-menu" id="inventoryholder">
                                                                         <li>Field to insert in template</li>
-                                                                        {% for field, fieldtype in inventory.fields.fields.items %}
+                                                                        {% for field, fieldtype in inventory.ordered_fields.items %}
                                                                             <li class="dropdown-submenu">
                                                                                 <a href="#" class="subentry">{{ field }} <span class="caret"></span> </a>
                                                                                 <ul class="dropdown-menu" data-field="{{ field }}" id="fieldholder">
                                                                                     <li>Field to select in form</li>
-                                                                                    {% for field, fieldtype in inventory.fields.fields.items %}
+                                                                                    {% for field, fieldtype in inventory.ordered_fields.items %}
                                                                                         <li><a href="#" class="insertinventory" data-selector="{{ field }}">{{ field }}</a></li>
                                                                                     {% endfor %}
                                                                                 </ul>
