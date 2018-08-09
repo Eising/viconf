@@ -14,7 +14,6 @@ from util.validators import ViconfValidators
 from inventory.helpers.helpers import InventoryHelpers
 
 import re
-import sys
 import copy
 import pystache
 
@@ -31,6 +30,20 @@ class TemplateList(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         return Template.objects.exclude(deleted=True)
+
+
+class TemplateListDeleted(LoginRequiredMixin, generic.ListView):
+    template_name = "templates/list.djhtml"
+    context_object_name = "templates"
+
+    def get_queryset(self):
+        return Template.objects.filter(deleted=True)
+
+    def get_context_data(self, **kwargs):
+        context = super(TemplateListDeleted, self).get_context_data(**kwargs)
+        context['undelete'] = True
+
+        return context
 
 
 @login_required
@@ -95,6 +108,14 @@ def template_delete(request, pk):
 
 
 @login_required
+def template_undelete(request, pk):
+    template = get_object_or_404(Template, pk=pk)
+    template.deleted = False
+    template.save()
+    return HttpResponseRedirect(reverse('configuration:templates'))
+
+
+@login_required
 def template_tags(request, template_id):
     template = get_object_or_404(Template, pk=template_id)
     # Mark all associated forms as require update
@@ -138,6 +159,16 @@ def form_list(request):
         return HttpResponseRedirect(reverse('configuration:formcompose'))
     else:
         return render(request, "forms/list.djhtml", {'forms': form})
+
+
+def form_list_deleted(request):
+    form = Form.objects.filter(deleted=True)
+
+    if not form:
+        return HttpResponseRedirect(reverse('configuration:formcompose'))
+    else:
+        return render(request, "forms/list.djhtml",
+                      {'forms': form, 'undelete': True})
 
 
 @login_required
@@ -216,14 +247,18 @@ def actual_form_create(**kwargs):
                                  ['name'], 'value': tdefaults[tag]['value']}
             else:
                 defaults[tag] = {'name': '', 'value': ''}
-        return render(request, "forms/config.djhtml", {'name': name, 'description': description,
-                                                       'tags': tags, 'templates': templates, 'form': form,
-                                                       'defaults': defaults})
+        return render(request,
+                      "forms/config.djhtml",
+                      {'name': name, 'description': description,
+                       'tags': tags, 'templates': templates, 'form': form,
+                       'defaults': defaults})
     else:
         for tag in tags:
             defaults[tag] = {'name': '', 'value': ''}
 
-        return render(request, "forms/config.djhtml", {'name': name, 'description': description, 'tags': tags, 'templates': templates, 'defaults': defaults})
+        return render(request, "forms/config.djhtml",
+                      {'name': name, 'description': description, 'tags': tags,
+                       'templates': templates, 'defaults': defaults})
 
 
 @login_required
@@ -277,7 +312,18 @@ def form_delete(request, pk):
     return HttpResponseRedirect(reverse('configuration:forms'))
 
 
+@login_required
+def form_undelete(request, pk):
+    form = get_object_or_404(Form, pk=pk)
+
+    form.deleted = False
+    form.save()
+
+    return HttpResponseRedirect(reverse('configuration:forms'))
+
 # Service Provisioning
+
+
 @login_required
 def service_provision(request):
     form = Form.objects.exclude(deleted=True).exclude(require_update=True)
@@ -406,7 +452,7 @@ def service_dynamic(request, pk):
 
 def validate_reference(request):
     reference = request.GET.get('reference', None)
-    if Service.objects.filter(reference__iexact=reference):
+    if Service.objects.exclude(deleted=True).filter(reference__iexact=reference):
         return JsonResponse("reference in use", safe=False)
     else:
         return JsonResponse("true", safe=False)
@@ -418,6 +464,20 @@ class ServiceIndex(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         return Service.objects.exclude(deleted=True)
+
+
+class ServiceDeletedIndex(LoginRequiredMixin, generic.ListView):
+    template_name = "services/index.djhtml"
+    context_object_name = "all_services"
+
+    def get_queryset(self):
+        return Service.objects.filter(deleted=True)
+
+    def get_context_data(self, **kwargs):
+        context = super(ServiceDeletedIndex, self).get_context_data(**kwargs)
+        context['undelete'] = True
+
+        return context
 
 
 @login_required
@@ -486,9 +546,25 @@ def render_service(request, service_id):
 def service_delete(request, pk):
     service = get_object_or_404(Service, pk=pk)
 
-    service.delete()
+    service.deleted = True
+
+    service.save()
 
     return HttpResponseRedirect(reverse('configuration:services'))
+
+
+def service_undelete(request, pk):
+    service = get_object_or_404(Service, pk=pk)
+    if len(Service.objects.exclude(deleted=True)
+           .filter(reference__iexact=service.reference)) > 0:
+        return render(request, "services/refcollision.djhtml")
+    else:
+
+        service.deleted = False
+
+        service.save()
+
+        return HttpResponseRedirect(reverse('configuration:services'))
 
 
 @login_required

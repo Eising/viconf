@@ -4,8 +4,12 @@
         <div class="row">
             <div class="content-box-large">
                 <div class="panel-heading">
-	                  <div class="panel-title">Manage templates</div>
-	                  <div class="panel-options"><a href="{% url 'configuration:templatecompose' %} "><i class="glyphicon glyphicon-plus" id="order_add_btn"></i></a></div>
+                    {% if undelete %}
+                        <div class="panel-title">Undelete templates</div>
+                    {% else %}
+                        <div class="panel-title">Manage templates</div>
+                    {% endif %}
+	                  <div class="panel-options"><a href="{% url 'configuration:templatecompose' %}" title="New Template" ><i class="glyphicon glyphicon-plus" id="order_add_btn"></i></a> <a href="{% url 'configuration:deletedtemplates' %}" title="Undelete templates"><i class="glyphicon glyphicon-cog"></i></a> </div>
                 </div>
                 <div class="panel-body">
 	                  <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="ordertable">
@@ -27,10 +31,15 @@
                                 <td>{{ template.description }}</td>
                                 <td>{{ template.platform }}</td>
 	                              <td>
+                                    {% if template.deleted %}
+                                        <a href="{% url 'configuration:templateundelete' pk=template.id %}"><button class="btn btn-success"><i class="glyphicon glyphicon-plus"></i> Undelete</button></a>
+                                    {% else %}
+
 		                                <a href="{% url 'configuration:templateview' pk=template.id %}"><button class="btn btn-default"><i class="glyphicon glyphicon-eye-open"></i> View</button></a>
                                     <a href="{% url 'configuration:templateclone' pk=template.id %}"><button class="btn btn-info"><i class="glyphicon glyphicon-arrow-right"></i> Clone</button></a>
 		                                <a href="{% url 'configuration:templateedit' pk=template.id %}"><button class="btn btn-primary"><i class="glyphicon glyphicon-pencil"></i> Edit</button></a>
 		                                <a data-href="{% url 'configuration:templatedelete' pk=template.id %}" data-toggle="modal"  data-target="#confirm-delete" ><button class="btn btn-danger" data-href="{% url 'configuration:templatedelete' pk=template.id %}" data-toggle="modal" data-target="#confirm-delete"><i class="glyphicon glyphicon-remove"></i> Delete</button></a>
+                                    {% endif %}
 	                              </td>
 	                          </tr>
 	                          {% endfor %}

@@ -4,8 +4,12 @@
   <div class="row">
     <div class="content-box-large">
       <div class="panel-heading">
+          {% if undelete %}
+	<div class="panel-title">Undelete forms</div>
+          {% else %}
 	<div class="panel-title">Manage forms</div>
-	<div class="panel-options"><a href="{% url 'configuration:formcompose' %}"><i class="glyphicon glyphicon-plus" id="order_add_btn"></i></a></div>
+          {% endif %}
+	        <div class="panel-options"><a href="{% url 'configuration:formcompose' %}" title="Create Form" ><i class="glyphicon glyphicon-plus" id="order_add_btn"></i></a> <a href="{% url 'configuration:undeleteforms' %}" title="Undelete Forms"><i class="glyphicon glyphicon-cog"></i></a></div>
       </div>
       <div class="panel-body">
 	<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="ordertable">
@@ -24,10 +28,14 @@
 	      <td>{{ form.name }}</td>
 	      <td>{{ form.description }}</td>
 	      <td>
+            {% if form.deleted %}
+                <a href="{% url 'configuration:formundelete' pk=form.id %}"><button class="btn btn-success"><i class="glyphicon glyphicon-plus"></i> Undelete</button></a>
+            {% else %}
 		<a href="{% url 'configuration:formview' pk=form.id %}"><button class="btn btn-default"><i class="glyphicon glyphicon-eye-open"></i>View</button></a>
 		<a data-href="{% url 'configuration:formdelete' pk=form.id %}" data-toggle="modal" data-target="#confirm-delete" ><button class="btn btn-danger" data-href="{% url 'configuration:formdelete' pk=form.id %}" data-toggle="modal"  data-target="#confirm-delete"><i class="glyphicon glyphicon-remove"></i>Delete</button></a>
     {% if form.require_update %}
 		<a href="{% url 'configuration:formupdate' pk=form.id %}"><button class="btn btn-warning"><i class="glyphicon glyphicon-exclamation-sign"></i>Update Required</button></a>
+    {% endif %}
     {% endif %}
 	      </td>
 	    </tr>

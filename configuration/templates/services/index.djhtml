@@ -5,7 +5,7 @@
     <div class="content-box-large">
       <div class="panel-heading">
         <div class="panel-title">All Services</div>
-        <div class="panel-options"></div>
+        <div class="panel-options"><a href="{% url 'configuration:servicesdeleted' %}" title="Undelete Services"><i class="glyphicon glyphicon-cog" ></i></a></div>
       </div>
       <div class="panel-body">
         {% if all_services %}
@@ -27,12 +27,16 @@
               <td>{{ service.form.name }}</td>
               <td>{{ service.product }}</td>
               <td>
+                  {% if service.deleted %}
+                      <a href="{% url 'configuration:serviceundelete' pk=service.id %}"><button class="btn btn-success btn-xs"><i class="glyphicon glyphicon-plus"></i> Undelete</button></a>
+                  {% else %}
                   <a href="{% url 'configuration:serviceconf' pk=service.id %}">
                       <button type="button" class="btn btn-primary btn-xs" >
                           <i class="glyphicon glyphicon-eye-open" ></i> View
                       </button>
                   </a>
                   <a data-href="{% url 'configuration:servicedelete' pk=service.id %}" data-toggle="modal" data-target="#confirm-delete"><button class="btn btn-xs btn-danger" data-href="{% url 'configuration:servicedelete' pk=service.id %}" data-toggle="modal" data-target="#confirm-delete"><i class="glyphicon glyphicon-remove"></i> Delete</button></a>
+                  {% endif %}
               </td>
 	          </tr>
             {% endfor %}

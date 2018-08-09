@@ -1,0 +1,10 @@
+{% extends 'base/base.djhtml' %}
+{% block content %}
+<div class="col-md-10" id="maincontents">
+  <div class="row">
+      <h3><span class="has-error">Error:</span> Can't undelete as another service uses this reference.</h3>
+      <p>Please delete the other service first</p>
+      <p>Click <a href="{% url 'configuration:services' %}">here</a> to go back to the list of services</p>
+  </div>
+</div>
+{% endblock %}
