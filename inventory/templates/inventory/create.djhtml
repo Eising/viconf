@@ -104,6 +104,7 @@
 {% block viewjs %}
     <script type="text/javascript">
      $(document).ready(function(){
+         var fieldcounter = 0;
     $("#addfieldbtn").click(function(){
         var fieldname = $("#fieldname").val();
         if ($("#" + fieldname +"row").length) {
@@ -112,11 +113,12 @@
         else {
             $("#errormsg").html("")
             var fieldclass = $("#fieldclass").val();
-            console.log(fieldclass);
-            $("#customfields").append("<div class=\"col-md\" id=\""+ fieldname +"row\"><input type=\"hidden\" name=\"field." + fieldname +"\" value=\""+ fieldclass + "\" class=\"customfield\"><div class=\"col-sm-2\"><input class=\"form-control\" disabled=\"disabled\" type=\"text\" value=\""+ fieldname + " ("+ fieldclass + ")\"><button type=\"button\" id=\""+ fieldname +"\" class=\"removalbutton btn btn-danger btn-xs\">Remove</button></div></div>");
+            console.log(fieldcounter);
+            $("#customfields").append("<div class=\"col-md\" id=\""+ fieldname +"row\"><input type=\"hidden\" name=\"field_" + fieldcounter + "." + fieldname +"\" value=\""+ fieldclass + "\" class=\"customfield\"><div class=\"col-sm-2\"><input class=\"form-control\" disabled=\"disabled\" type=\"text\" value=\""+ fieldname + " ("+ fieldclass + ")\"><button type=\"button\" id=\""+ fieldname +"\" class=\"removalbutton btn btn-danger btn-xs\">Remove</button></div></div>");
         }
             $("#fieldname").val("");
             $("#fieldname").focus();
+            fieldcounter++;
     });
 
 

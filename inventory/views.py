@@ -41,11 +41,15 @@ def add_inventory(request):
 
     elif request.method == 'POST':
         # Something
-        fields = dict()
+        fields = list()
         for key, value in request.POST.items():
-            param = re.match(r'^field\.(.*)$', key)
+            param = re.match(r'^field_(\d+)\.(.*)$', key)
             if param is not None:
-                fields[param.group(1)] = value
+                index = int(param.group(1))
+                field = param.group(2)
+                fields.append([index, field, value])
+
+        fields.sort(key=lambda x: x[0])
 
         kwargs = {'name': request.POST.get('name', None), 'fields': fields}
         InventoryHelpers.add_inventory(**kwargs)
@@ -86,7 +90,7 @@ def generate_form(dictionary):
 @login_required
 def view_inventory(request, pk):
     inventory = get_object_or_404(Inventory, pk=pk)
-    columns = inventory.fields['fields']
+    columns = inventory.ordered_fields
 
     InvForm = generate_form(columns)
     form = InvForm()
@@ -104,7 +108,7 @@ def add_row(request, pk):
     if request.method == 'POST':
         inventory = get_object_or_404(Inventory, pk=pk)
         # Add row
-        fieldset = inventory.fields['fields']
+        fieldset = inventory.ordered_fields
         InvForm = generate_form(fieldset)
         form = InvForm(request.POST)
         if form.is_valid():
@@ -141,7 +145,7 @@ def update_row(request):
 def generate_template(request, pk, export=False):
     inventory = get_object_or_404(Inventory, pk=pk)
 
-    fields = [inventory.fields['fields'].keys()]
+    fields = [inventory.ordered_fields.keys()]
 
     return excel.make_response_from_array(fields, 'xlsx',
                                           file_name="{}.xlsx".format(

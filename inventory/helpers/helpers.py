@@ -26,7 +26,7 @@ class InventoryHelpers:
     def add_inventory_row(parent, entries):
         validators = ViconfValidators()
 
-        fieldset = parent.fields['fields']
+        fieldset = parent.ordered_fields
         for field, value in entries.items():
             if field not in fieldset:
                 raise ValidationError("{} not defined in parent".format(field))
@@ -65,7 +65,7 @@ class InventoryHelpers:
 
     def reverse(inventory, pk):
         parent = Inventory.objects.filter(fields__name=inventory).first()
-        structure = parent.fields['fields']
+        structure = parent.ordered_fields
 
         row = Inventory.objects.get(pk=pk)
 
