@@ -445,9 +445,10 @@ def service_dynamic(request, pk):
             form_inventory[parsed_tag[0]] = InventoryHelpers.fetch_inventory_tuple_with_ids(
                 parsed_tag)
 
-    return render(request, "services/dynamic.djhtml", {'defaults': defaults, 'link_tags': link_tags,
-                                                       'nodes': nodes, 'inventories': form_inventory,
-                                                       'all_lists': all_lists})
+    return render(request, "services/dynamic.djhtml",
+                  {'defaults': defaults, 'link_tags': link_tags,
+                   'nodes': nodes, 'inventories': form_inventory,
+                   'all_lists': all_lists})
 
 
 def validate_reference(request):
