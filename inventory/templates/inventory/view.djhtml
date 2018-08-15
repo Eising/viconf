@@ -102,7 +102,7 @@
 
          $('.editable').editable();
          $('#inventorytable').dataTable({
-             "order": []
+             "bSort": false
          });
          var $validator = $("#rowtable").validate({
              errorElement: "em",
