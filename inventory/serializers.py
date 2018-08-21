@@ -6,6 +6,7 @@ class InventorySerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     parent_id = serializers.IntegerField(read_only=True)
     fields = serializers.JSONField()
+    ordered_fields = serializers.JSONField()
 
     def create(self, validated_data):
         #        print(validated_data, file=sys.stderr)
