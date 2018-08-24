@@ -85,6 +85,21 @@ This file is the agenda and project file for the Viconf project. It includes mil
      allow configuration of all fields, including inventory selection, python
      sandbox, etc. Plugins should come in here as well.
 
+***** Example Template Model:
+      #+BEGIN_EXAMPLE
+        {
+          "key1": {
+                  "type": "string",
+                  "validator": "asn"
+                  },
+          "key2": {
+                  "type": "inventory",
+                  "inventory_id": 3,
+                  }
+        }
+
+      #+END_EXAMPLE
+
 *** App improvements
 **** TODO Full API
      Everything needs to be accessible via API
